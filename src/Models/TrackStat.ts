@@ -4,7 +4,7 @@ import { Track } from "./Track";
 
 const { Schema } = mongoose;
 
-export interface ITrackStats extends Document {
+export interface ITrackStat extends Document {
 	userId: Types.ObjectId;
 	trackId: Types.ObjectId;
 	playtime: number;
@@ -14,7 +14,7 @@ export interface ITrackStats extends Document {
 	bestTime: number;
 }
 
-export const TrackStatsSchema = new Schema({
+export const TrackStatSchema = new Schema({
 	userId: {
 		type: Schema.Types.ObjectId,
 		ref: "User",
@@ -41,3 +41,5 @@ export const TrackStatsSchema = new Schema({
 	bestLap: { type: Number, required: true, default: 0 },
 	bestTime: { type: Number, required: true, default: 0 },
 });
+
+export const TrackStat = mongoose.model<ITrackStat>("TrackStat", TrackStatSchema);

@@ -34,3 +34,5 @@ export const RatingSchema = new Schema({
 	},
 	rating: { type: Number, required: true, min: 0, max: 5 }
 });
+
+export const Rating = mongoose.model<IRating>("Rating", RatingSchema);
