@@ -7,12 +7,12 @@ export class ImageFileService {
 	private defaultProfilePicturePath = "../../public/images/profilePictures/default.jpg";
 
 	public saveProfilePictureJPG(file: Buffer, userId: string) {
-		const fileName = `${this.profilePicturePath}/${userId}.jpg`
+		const fileName = path.join(__dirname, `${this.profilePicturePath}/${userId}.jpg`);
 		fs.writeFileSync(fileName, file);
 	}
 
 	public saveProfilePicturePNG(file: Buffer, userId: string) {
-		const fileName = `${this.profilePicturePath}/${userId}.png`
+		const fileName = path.join(__dirname, `${this.profilePicturePath}/${userId}.png`);
 		fs.writeFileSync(fileName, file);
 	}
 

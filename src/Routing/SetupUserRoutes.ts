@@ -1,4 +1,4 @@
-import { sendOKResponse } from "../Global/ResponseHandler";
+import { sendErrorResponse, sendOKResponse } from "../Global/ResponseHandler";
 import { SessionData } from "../Models/SessionData";
 import { AuthenticationService } from "../Services/AuthenticationService";
 import { ImageFileService } from "../Services/ImageFileService";
@@ -12,27 +12,19 @@ export const setupUserRoutes = (app: Express, userService: UserService, imageFil
 	const bodyParser = require('body-parser');
 
 	app.post(`${basePath}/uploadPicture`, bodyParser.raw({
-		type: 'image/jpeg',
+		type: 'image/*',
 		limit: '10mb'
 	}), (request: Request, response: Response) => {
 		const sessionToken = request.header('Session-Token') as string;
-		const sessionData: SessionData = AuthenticationService.verifySessionToken(sessionToken);
-
-		imageFileService.saveProfilePictureJPG(request.body, sessionData.userId.toHexString());
-
-		sendOKResponse(response, "Profile picture uploaded.");
-	});
-
-	app.post(`${basePath}/uploadPicture`, bodyParser.raw({
-		type: 'image/png',
-		limit: '10mb'
-	}), (request: Request, response: Response) => {
-		const sessionToken = request.header('Session-Token') as string;
-		const sessionData: SessionData = AuthenticationService.verifySessionToken(sessionToken);
-
-		imageFileService.saveProfilePicturePNG(request.body, sessionData.userId.toHexString());
-
-		sendOKResponse(response, "Profile picture uploaded.");
+		try {
+			const sessionData: SessionData = AuthenticationService.verifySessionToken(sessionToken);
+	
+			imageFileService.saveProfilePictureJPG(request.body, sessionData.userId.toHexString());
+	
+			sendOKResponse(response, "Profile picture uploaded.");
+		} catch (error: any) {
+			sendErrorResponse(response, error);
+		}
 	});
 
 	app.get(`${basePath}/picture/:id`, (request: Request, response: Response) => {
