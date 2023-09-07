@@ -34,4 +34,16 @@ export const setupAuthenticationRoutes = (app: Express, authService: Authenticat
 			response.send(error.message)?.status(error?.statusCode);
 		}
 	});
+
+	app.post(`${basePath}/login`, async (request: Request, response: Response) => {
+		const username = request.body.username;
+		const password = request.body.password;
+		authService.login(username, password)
+			.then((sessionData) => {
+				response.status(StatusCodes.OK).send(sessionData);
+			}
+			).catch((error) => {
+				response.send(error.message)?.status(error?.statusCode);
+			});
+	});
 };
