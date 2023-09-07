@@ -4,9 +4,10 @@ import { AuthenticationService } from "../Services/AuthenticationService";
 import { ImageFileService } from "../Services/ImageFileService";
 import { UserService } from "../Services/UserService";
 import { Express, Request, Response } from 'express';
+import { StatusCodes } from 'http-status-codes';
 
 export const setupUserRoutes = (app: Express, userService: UserService, imageFileService: ImageFileService) => {
-	const basePath = '/api/user';
+	const basePath = '/api/users';
 
 	const bodyParser = require('body-parser');
 
@@ -32,5 +33,12 @@ export const setupUserRoutes = (app: Express, userService: UserService, imageFil
 		imageFileService.saveProfilePicturePNG(request.body, sessionData.userId.toHexString());
 
 		sendOKResponse(response, "Profile picture uploaded.");
+	});
+
+	app.get(`${basePath}/picture/:id`, (request: Request, response: Response) => {
+		const userId = request.params.id;
+		const profilePicture = imageFileService.getProfilePicture(userId);
+
+		response.status(StatusCodes.OK).sendFile(profilePicture);
 	});
 }

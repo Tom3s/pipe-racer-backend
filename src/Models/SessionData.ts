@@ -48,6 +48,6 @@ export class ClientSessionData implements IClientSessionData {
 	) {
 		this.username = user.username;
 		this.userId = user._id.toHexString();
-		this.profilePictureUrl = process.env.HOST + ":" + process.env.PORT + "/api/users/" + this.userId + "/profilePicture"; 
+		this.profilePictureUrl = process.env.HOST + ":" + process.env.PORT + "/api/users/picture/" + this.userId; 
 	}
 }
