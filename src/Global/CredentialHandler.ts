@@ -7,22 +7,22 @@ export const verifyPasswordStrength = (password: string) => {
 	if (!regex.test(password)) {
 		throw new PassworTooWeakError();
 	}
-}
+};
 
 export const verifyEmailValidity = (email: string) => {
 	const regex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
 	if (!regex.test(email)) {
 		throw new InvalidEmailError();
 	}
-}
+};
 
 export const generatePasswordHash = (password: string): string => {
 	const { createHash } = require('crypto');
 
 	return createHash('sha256').update(password).digest('hex');
-}
+};
 
-export const verifyRegistrationDate = (date: Date) => {
+export const verifyTokenExpirationDate = (date: Date) => {
 	date = new Date(date);
 	const now = new Date();
 	const diff = now.getTime() - date.getTime();
@@ -30,4 +30,4 @@ export const verifyRegistrationDate = (date: Date) => {
 	if (diffInHours > 24) {
 		throw new ExpiredRegistrationTokenError();
 	}
-}
+};

@@ -1,5 +1,6 @@
 import { Types } from "mongoose";
 import { IUser } from "./User";
+import { verifyTokenExpirationDate } from "../Global/CredentialHandler";
 
 export interface ISessionData {
 	username: string;
@@ -15,6 +16,16 @@ export class SessionData implements ISessionData {
 		public admin: boolean,
 		public loginDate: Date = new Date()
 	) {}
+
+	static fromTokenData(tokenData: any): SessionData {
+		verifyTokenExpirationDate(tokenData.loginDate);
+		return new SessionData(
+			tokenData.username,
+			new Types.ObjectId(tokenData.userId),
+			tokenData.admin,
+			new Date(tokenData.loginDate)
+		);
+	}
 };
 
 export interface IClientSessionData {

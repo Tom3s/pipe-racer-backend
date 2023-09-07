@@ -3,7 +3,7 @@ import { InvalidCredentialsError } from "../Errors/InvalidCredentialsError";
 import { InvalidEmailError } from "../Errors/InvalidEmailError";
 import { PassworTooWeakError } from "../Errors/PasswordTooWeakError";
 import { UsernameTakenError } from "../Errors/UsernameTakenError";
-import { generatePasswordHash, verifyEmailValidity, verifyPasswordStrength, verifyRegistrationDate } from "../Global/CredentialHandler";
+import { generatePasswordHash, verifyEmailValidity, verifyPasswordStrength, verifyTokenExpirationDate } from "../Global/CredentialHandler";
 import { decodeTokenData, generateJWToken } from "../Global/JWTHandler";
 import { ClientSessionData, SessionData } from "../Models/SessionData";
 import { IUser, User } from "../Models/User";
@@ -32,7 +32,7 @@ export class AuthenticationService {
 
 	confirmRegistration(token: string) {
 		const decodedToken = decodeTokenData(token);
-		verifyRegistrationDate(decodedToken.date);
+		verifyTokenExpirationDate(decodedToken.date);
 
 		return this.userRepository.save(decodedToken)
 	}
@@ -91,5 +91,12 @@ export class AuthenticationService {
 		if (missingFields.length > 0) {
 			throw new BadREquestError(missingFields);
 		}
+	}
+
+	static verifySessionToken(token: string): SessionData {
+		const decodedToken = decodeTokenData(token);
+		return SessionData.fromTokenData(
+			decodedToken
+		);
 	}
 }

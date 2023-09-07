@@ -1,6 +1,7 @@
 import { Express, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { AuthenticationService } from '../Services/AuthenticationService';
+import { sendErrorResponse, sendOKResponse } from '../Global/ResponseHandler';
 
 export const setupAuthenticationRoutes = (app: Express, authService: AuthenticationService) => {
 	const basePath = '/api/auth';
@@ -11,27 +12,20 @@ export const setupAuthenticationRoutes = (app: Express, authService: Authenticat
 		const email = request.body.email;
 		authService.getRegistrationToken(username, password, email)
 			.then((tokenUrl) => {
-				response.status(StatusCodes.OK).send(tokenUrl);
+				sendOKResponse(response, tokenUrl);
 			}
 			).catch((error) => {
-				response.send(error.message)?.status(error?.statusCode);
+				sendErrorResponse(response, error);
 			});
 	});
 
 	app.get(`${basePath}/confirm`, (request: Request, response: Response) => {
 		const token = request.query.token as string;
-		// authService.confirmRegistration(token)
-		// 	.then(() => {
-		// 		response.status(StatusCodes.OK).send("Registration confirmed.");
-		// 	}
-		// 	).catch((error) => {
-		// 		response.send(error.message)?.status(error?.statusCode);
-		// 	});
 		try {
 			authService.confirmRegistration(token);
-			response.status(StatusCodes.OK).send("Registration confirmed.");
+			sendOKResponse(response, "Registration confirmed.");
 		} catch (error: any) {
-			response.send(error.message)?.status(error?.statusCode);
+			sendErrorResponse(response, error);
 		}
 	});
 
@@ -40,10 +34,10 @@ export const setupAuthenticationRoutes = (app: Express, authService: Authenticat
 		const password = request.body.password;
 		authService.login(username, password)
 			.then((sessionData) => {
-				response.status(StatusCodes.OK).send(sessionData);
+				sendOKResponse(response, sessionData);
 			}
 			).catch((error) => {
-				response.send(error.message)?.status(error?.statusCode);
+				sendErrorResponse(response, error);
 			});
 	});
 };
