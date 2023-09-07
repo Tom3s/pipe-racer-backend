@@ -25,6 +25,11 @@ export class Repository<IDataType extends Document> implements IRepository<IData
 	remove(entityId: Types.ObjectId): Promise<IDataType | null> {
 		return this.model.findByIdAndDelete(entityId);
 	}
+
+	exists(query: any): Promise<IDataType | null> {
+		// return this.model.exists(query);
+		return this.model.findOne(query);
+	}
 	
 }
 

@@ -6,4 +6,5 @@ export interface IRepository<DataType extends Document> {
 	getAll(): Promise<DataType[]>;
 	update(dataId: Types.ObjectId, dataUpdates: DataType): Promise<DataType | null>;
 	remove(dataId: Types.ObjectId): Promise<DataType | null>;
+	exists(query: any): Promise<DataType | null>;
 };
