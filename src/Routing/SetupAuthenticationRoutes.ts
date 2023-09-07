@@ -4,16 +4,34 @@ import { AuthenticationService } from '../Services/AuthenticationService';
 
 export const setupAuthenticationRoutes = (app: Express, authService: AuthenticationService) => {
 	const basePath = '/api/auth';
+
 	app.post(`${basePath}/register`, async (request: Request, response: Response) => {
 		const username = request.body.username;
 		const password = request.body.password;
 		const email = request.body.email;
 		authService.getRegistrationToken(username, password, email)
-			.then((token) => {
-				response.status(StatusCodes.OK).send(token);
+			.then((tokenUrl) => {
+				response.status(StatusCodes.OK).send(tokenUrl);
 			}
 			).catch((error) => {
 				response.send(error.message)?.status(error?.statusCode);
 			});
+	});
+
+	app.get(`${basePath}/confirm`, (request: Request, response: Response) => {
+		const token = request.query.token as string;
+		// authService.confirmRegistration(token)
+		// 	.then(() => {
+		// 		response.status(StatusCodes.OK).send("Registration confirmed.");
+		// 	}
+		// 	).catch((error) => {
+		// 		response.send(error.message)?.status(error?.statusCode);
+		// 	});
+		try {
+			authService.confirmRegistration(token);
+			response.status(StatusCodes.OK).send("Registration confirmed.");
+		} catch (error: any) {
+			response.send(error.message)?.status(error?.statusCode);
+		}
 	});
 };
