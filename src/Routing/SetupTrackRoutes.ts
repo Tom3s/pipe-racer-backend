@@ -19,7 +19,7 @@ export const setupTrackRoutes = (app: Express, trackService: TrackService, track
 
 			// console.log(trackData);
 
-			trackService.uploadTrack(trackData, sessionData.userId)
+			trackService.uploadTrack(trackData, sessionData.userId, sessionData.username)
 				.then((track) => {
 					console.log("No error")
 					sendOKResponse(response, track);

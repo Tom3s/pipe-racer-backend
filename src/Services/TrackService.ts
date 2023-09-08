@@ -12,11 +12,12 @@ export class TrackService {
 		this.trackFileService = trackFileService;
 	}
 
-	async uploadTrack(track: any, author: Types.ObjectId): Promise<ITrack> {
+	async uploadTrack(track: any, author: Types.ObjectId, authorName: string): Promise<ITrack> {
 		const newTrack = {
 			name: track.trackName as string,
 			author: author,
 		} as ITrack;
+		track.author = authorName;
 		return this.trackRepository.save(newTrack)
 			.then((addedTrack) => {
 				return this.trackFileService.saveTrackFile(track, addedTrack._id.toHexString())
