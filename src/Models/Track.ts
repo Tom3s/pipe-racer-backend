@@ -5,16 +5,16 @@ const { Schema } = mongoose;
 
 export interface ITrack extends Document {
 	name: string;
-	trackFileName: string;
+	// trackFileName: string;
 	trackImageFileName?: string;
 	author: Types.ObjectId | IUser;
-	rating: number;
-	downloads: number;
+	rating?: number;
+	downloads?: number;
 }
 
 export const TrackSchema = new Schema({
 	name: { type: String, required: true },
-	trackFileName: { type: String, required: true },
+	// trackFileName: { type: String, required: true },
 	trackImageFileName: String,
 	author: { 
 		type: Schema.Types.ObjectId, 
@@ -27,8 +27,8 @@ export const TrackSchema = new Schema({
 			message: "Invalid user ID"
 		}
 	},
-	rating: { type: Number, required: true, default: 0 },
-	downloads: { type: Number, required: true, default: 0 }
+	rating: { type: Number, /*required: true,*/ default: 0 },
+	downloads: { type: Number, /*required: true,*/ default: 0 }
 });
 
 export const Track = mongoose.model<ITrack>("Track", TrackSchema);

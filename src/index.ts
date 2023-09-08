@@ -7,6 +7,10 @@ import { setupAuthenticationRoutes } from './Routing/SetupAuthenticationRoutes';
 import { UserService } from './Services/UserService';
 import { setupUserRoutes } from './Routing/SetupUserRoutes';
 import { ImageFileService } from './Services/ImageFileService';
+import { setupTrackRoutes } from './Routing/SetupTrackRoutes';
+import { TrackService } from './Services/TrackService';
+import { TrackFileService } from './Services/TrackFileService';
+import { TrackRepository } from './Repositories/TrackRepository';
 
 dotenv.config();
 
@@ -26,12 +30,16 @@ app.use(cors({
 connectToDatabase();
 
 const userRepository = new UserRepository();
-const authService = new AuthenticationService(userRepository);
+const trackRepository = new TrackRepository();
 const imageFileService = new ImageFileService();
+const trackFileService = new TrackFileService();
+const trackService = new TrackService(trackRepository, trackFileService);
+const authService = new AuthenticationService(userRepository);
 const userService = new UserService(userRepository);
 
 setupAuthenticationRoutes(app, authService);
 setupUserRoutes(app, userService, imageFileService);
+setupTrackRoutes(app, trackService, trackFileService);
 
 app.get('/', (req: Request, res: Response) => {
   res.send('Express + TypeScript Server');
