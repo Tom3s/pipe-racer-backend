@@ -19,11 +19,15 @@ export class Repository<IDataType extends Document> implements IRepository<IData
 	}
 
 	update(entityId: Types.ObjectId, entityUpdates: Partial<IDataType>): Promise<IDataType | null> {
-		return this.model.findByIdAndUpdate(entityId, entityUpdates, { new: true, runValidators: true });
+		return this.model.findByIdAndUpdate(entityId, entityUpdates, { new: true, runValidators: true }).exec();
+	}
+
+	updateQuery(entityId: Types.ObjectId, query: any): Promise<IDataType | null> {
+		return this.model.findByIdAndUpdate(entityId, query, { new: true, runValidators: true }).exec();
 	}
 
 	remove(entityId: Types.ObjectId): Promise<IDataType | null> {
-		return this.model.findByIdAndDelete(entityId);
+		return this.model.findByIdAndDelete(entityId).exec();
 	}
 
 	exists(query: any): Promise<IDataType | null> {

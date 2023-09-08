@@ -58,7 +58,7 @@ export const setupTrackRoutes = (app: Express, trackService: TrackService, track
 		try {
 			const sessionData: SessionData = AuthenticationService.verifySessionToken(sessionToken);
 			const trackId = request.params.id as string;
-
+			trackService.incrementDownloadCount(createObjectId(trackId));
 			response.sendFile(trackFileService.getTrackFile(trackId));
 		} catch (error: any) {
 			sendErrorResponse(response, error);

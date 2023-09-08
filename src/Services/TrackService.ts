@@ -25,7 +25,7 @@ export class TrackService {
 					})
 					.catch((error) => {
 						console.log("deleting entry from database", addedTrack._id);
-						this.trackRepository.remove(addedTrack._id).then();
+						this.trackRepository.remove(addedTrack._id);
 						throw error;
 					})
 			})
@@ -44,5 +44,9 @@ export class TrackService {
 
 	async getTrack(trackId: Types.ObjectId): Promise<ITrack | null> {
 		return this.trackRepository.get(trackId);
+	}
+
+	incrementDownloadCount(trackId: Types.ObjectId) {
+		this.trackRepository.updateQuery(trackId, { $inc: { downloads: 1 } });
 	}
 }
