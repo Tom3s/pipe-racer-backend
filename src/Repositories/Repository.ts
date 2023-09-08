@@ -3,7 +3,7 @@ import { IRepository } from "../Models/IRepository";
 
 export class Repository<IDataType extends Document> implements IRepository<IDataType> {
 
-	constructor(private model: Model<IDataType>) {}
+	constructor(protected model: Model<IDataType>) {}
 
 	save(newEntityData: IDataType): Promise<IDataType> {
 		const newEntity = new this.model(newEntityData);

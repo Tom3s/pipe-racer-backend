@@ -22,6 +22,10 @@ export const validateTrackFormat1 = (track: any) => {
 		// "props"
 	];
 
+	if (!track.author){
+		track.author = "unknown";
+	}
+
 	for (const field of requiredFields) {
 		if (!track.hasOwnProperty(field)) {
 			throw new InvalidTrackFormatError("No metadata");
