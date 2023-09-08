@@ -5,6 +5,8 @@ import { SessionData } from '../Models/SessionData';
 import { AuthenticationService } from '../Services/AuthenticationService';
 import { TrackService } from '../Services/TrackService';
 import { sendErrorResponse, sendOKResponse } from '../Global/ResponseHandler';
+import { createObjectId } from '../Global/CreateObjectId';
+import { TrackNotFoundError } from '../Errors/TrackNotFoundError';
 
 export const setupTrackRoutes = (app: Express, trackService: TrackService, trackFileService: TrackFileService) => {
 	const basePath = '/api/tracks';
@@ -23,7 +25,7 @@ export const setupTrackRoutes = (app: Express, trackService: TrackService, track
 					sendOKResponse(response, track);
 				})
 				.catch((error) => {
-					console.log("Error status", error?.statusCode);	
+					console.log("Error status", error?.statusCode);
 					sendErrorResponse(response, error);
 				});
 		} catch (error: any) {
@@ -31,4 +33,35 @@ export const setupTrackRoutes = (app: Express, trackService: TrackService, track
 		}
 	});
 
+	app.get(`${basePath}`, (request: Request, response: Response) => {
+		trackService.getAllTracks()
+			.then((tracks) => {
+				sendOKResponse(response, tracks);
+			})
+	});
+
+	app.get(`${basePath}/:id`, (request: Request, response: Response) => {
+		const trackId = request.params.id;
+		const objectId = createObjectId(trackId);
+		trackService.getTrack(objectId)
+			.then((track) => {
+				if (track === null) {
+					sendErrorResponse(response, new TrackNotFoundError());
+					return;
+				}
+				sendOKResponse(response, track);
+			})
+	});
+
+	app.get(`${basePath}/download/:id`, (request: Request, response: Response) => {
+		const sessionToken = request.header('Session-Token') as string;
+		try {
+			const sessionData: SessionData = AuthenticationService.verifySessionToken(sessionToken);
+			const trackId = request.params.id as string;
+
+			response.sendFile(trackFileService.getTrackFile(trackId));
+		} catch (error: any) {
+			sendErrorResponse(response, error);
+		}
+	});
 }

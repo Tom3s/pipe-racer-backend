@@ -2,6 +2,7 @@ import fs from "fs";
 import path from "path";
 import { UploadingTrackError } from "../Errors/UploadingTrackError";
 import { validateTrackFormat } from "./TrackFormatValidatorService";
+import { TrackNotFoundError } from "../Errors/TrackNotFoundError";
 
 export class TrackFileService {
 	constructor(
@@ -15,5 +16,13 @@ export class TrackFileService {
 				throw new UploadingTrackError(error);
 			}
 		});
+	}
+
+	getTrackFile(trackId: string): string {
+		const trackPath = `${this.trackFileDirectory}/${trackId}.json`;
+		if (!fs.existsSync(trackPath)) {
+			throw new TrackNotFoundError();
+		}
+		return trackPath;
 	}
 }

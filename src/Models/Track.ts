@@ -10,6 +10,7 @@ export interface ITrack extends Document {
 	author: Types.ObjectId | IUser;
 	rating?: number;
 	downloads?: number;
+	uploadDate?: Date;
 }
 
 export const TrackSchema = new Schema({

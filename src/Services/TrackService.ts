@@ -30,4 +30,19 @@ export class TrackService {
 					})
 			})
 	}
+
+	async getAllTracks(): Promise<ITrack[]> {
+		return this.trackRepository.getAll().then((tracks: ITrack[]) => {
+			return tracks.map((track) => {
+				return {
+					...track.toObject(),
+					uploadDate: track._id.getTimestamp()
+				}
+			}) as ITrack[];
+		});
+	}
+
+	async getTrack(trackId: Types.ObjectId): Promise<ITrack | null> {
+		return this.trackRepository.get(trackId);
+	}
 }
