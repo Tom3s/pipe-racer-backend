@@ -1,3 +1,4 @@
+import { createObjectId } from "../Global/CreateObjectId";
 import { sendErrorResponse, sendOKResponse } from "../Global/ResponseHandler";
 import { SessionData } from "../Models/SessionData";
 import { AuthenticationService } from "../Services/AuthenticationService";
@@ -11,6 +12,24 @@ export const setupUserRoutes = (app: Express, userService: UserService, imageFil
 
 	const bodyParser = require('body-parser');
 
+	app.get(`${basePath}`, (request: Request, response: Response) => {
+		userService.getAllUsers()
+			.then((users) => {
+				sendOKResponse(response, users);
+			})
+	});
+
+	app.get(`${basePath}/:id`, (request: Request, response: Response) => {
+		const userId = createObjectId(request.params.id as string);
+		userService.getUserById(userId)
+			.then((user) => {
+				sendOKResponse(response, user);
+			})
+			.catch((error) => {
+				sendErrorResponse(response, error);
+			});
+	});
+
 	app.post(`${basePath}/uploadPicture`, bodyParser.raw({
 		type: 'image/*',
 		limit: '10mb'
@@ -18,9 +37,9 @@ export const setupUserRoutes = (app: Express, userService: UserService, imageFil
 		const sessionToken = request.header('Session-Token') as string;
 		try {
 			const sessionData: SessionData = AuthenticationService.verifySessionToken(sessionToken);
-	
+
 			imageFileService.saveProfilePictureJPG(request.body, sessionData.userId.toHexString());
-	
+
 			sendOKResponse(response, "Profile picture uploaded.");
 		} catch (error: any) {
 			sendErrorResponse(response, error);

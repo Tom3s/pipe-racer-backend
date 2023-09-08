@@ -14,6 +14,10 @@ export class Repository<IDataType extends Document> implements IRepository<IData
 		return this.model.findById(entityId);
 	}
 
+	getQuery(query: any): Promise<IDataType[]> {
+		return this.model.find(query);
+	}
+
 	getAll(): Promise<IDataType[]> {
 		return this.model.find({});
 	}
@@ -35,5 +39,8 @@ export class Repository<IDataType extends Document> implements IRepository<IData
 		return this.model.findOne(query);
 	}
 	
+	aggregate(pipeline: any[]): Promise<IDataType[]> {
+		return this.model.aggregate(pipeline).exec();
+	}
 }
 

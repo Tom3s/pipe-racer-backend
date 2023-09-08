@@ -12,7 +12,7 @@ export interface IRating extends Document {
 }
 
 export const RatingSchema = new Schema({
-	userId: {
+	user: {
 		type: Schema.Types.ObjectId,
 		ref: "User",
 		required: true,
@@ -22,7 +22,7 @@ export const RatingSchema = new Schema({
 			},
 		}
 	},
-	trackId: {
+	track: {
 		type: Schema.Types.ObjectId,
 		ref: "Track",
 		required: true,

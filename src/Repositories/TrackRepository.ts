@@ -8,6 +8,9 @@ export class TrackRepository extends Repository<ITrack> {
 	}
 
 	getAll(): Promise<ITrack[]> {
-		return this.model.find({}).populate("author");
+		return this.model.find({}).populate({
+			path: "author",
+			select: "username _id"
+		});
 	}
 };

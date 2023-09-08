@@ -5,13 +5,15 @@ import { Track } from "./Track";
 const { Schema } = mongoose;
 
 export interface ICompletedRun extends Document {
-	userId: Types.ObjectId;
-	trackId: Types.ObjectId;
+	user: Types.ObjectId;
+	track: Types.ObjectId;
 	splits: number[][]; // [lapIndex][preLapSplitIndex]
+	time?: number;
+	bestLap?: number;
 };
 
 export const CompletedRunSchema = new Schema({
-	userId: {
+	user: {
 		type: Schema.Types.ObjectId,
 		ref: "User",
 		required: true,
@@ -21,7 +23,7 @@ export const CompletedRunSchema = new Schema({
 			}
 		}
 	},
-	trackId: {
+	track: {
 		type: Schema.Types.ObjectId,
 		ref: "Track",
 		required: true,
@@ -34,7 +36,9 @@ export const CompletedRunSchema = new Schema({
 	splits: {
 		type: [[Number]],
 		required: true,
-	}
+	},
+	time: Number,
+	bestLap: Number,
 });
 
 export const CompletedRun = mongoose.model<ICompletedRun>("CompletedRun", CompletedRunSchema);
