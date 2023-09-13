@@ -10,6 +10,7 @@ export interface ICompletedRun extends Document {
 	splits: number[][]; // [lapIndex][preLapSplitIndex]
 	time?: number;
 	bestLap?: number;
+	date?: Date;
 };
 
 export const CompletedRunSchema = new Schema({

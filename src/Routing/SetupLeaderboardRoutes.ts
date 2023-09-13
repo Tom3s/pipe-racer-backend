@@ -11,10 +11,33 @@ export const setupLeaderboardRoutes = (app: Express, leaderboardService: Leaderb
 
 	app.get(`${basePath}/:trackId`, async (request: Request, response: Response) => {
 		const trackId = createObjectId(request.params.trackId as string);
-		leaderboardService.getLeaderboard(trackId)
-			.then((leaderboard) => {
-				sendOKResponse(response, leaderboard);
-			})
+		const sortByLap = request.query.sortByLap === 'true';
+		if (sortByLap) {
+			leaderboardService.getLeaderboardSortedByLap(trackId)
+				.then((leaderboard) => {
+					sendOKResponse(response, leaderboard);
+				})
+		} else {
+			leaderboardService.getLeaderboard(trackId)
+				.then((leaderboard) => {
+					sendOKResponse(response, leaderboard);
+				})
+		}
+	});
+
+	app.get(`${basePath}/:trackId/placement`, async (request: Request, response: Response) => {
+		const sessionToken = request.header('Session-Token') as string;
+		try {
+			const sessionData: SessionData = AuthenticationService.verifySessionToken(sessionToken);
+			const trackId = createObjectId(request.params.trackId as string);
+			leaderboardService.getPlacement(sessionData.userId, trackId)
+				.then((placement) => {
+					sendOKResponse(response, placement);
+				})
+		} catch (error: any) {
+			sendErrorResponse(response, error);
+		}
+
 	});
 
 	app.post(basePath, async (request: Request, response: Response) => {
@@ -35,5 +58,5 @@ export const setupLeaderboardRoutes = (app: Express, leaderboardService: Leaderb
 		} catch (error: any) {
 			sendErrorResponse(response, error);
 		}
-	});	
+	});
 }
