@@ -20,15 +20,23 @@ dotenv.config();
 const app: Express = express();
 const port = process.env.PORT;
 
-app.use(express.json());
+// app.use(express.json({limit: '10mb'}));
+// app.use(express.urlencoded({limit: '10mb'}));
+// app.use(express.bodyParser({limit: '10mb'}));
 
 const cors = require('cors');
-
 app.use(cors({
     origin: '*',
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization', 'Session-Token']
 }));
+
+
+const bodyParser = require('body-parser');
+app.use(express.json({ limit: '10mb' }));
+// app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+
 
 connectToDatabase();
 
