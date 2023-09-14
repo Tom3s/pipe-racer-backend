@@ -10,7 +10,11 @@ export class UserService {
 	}
 
 	public async getUserById(userId: Types.ObjectId) {
-		return this.userRepository.get(userId);
+		const user = await this.userRepository.get(userId);
+		return {
+			...user?.toObject(),
+			profilePictureUrl: process.env.HOST + ":" + process.env.PORT + "/api/users/picture/" + user?._id.toHexString()
+		}
 	}
 
 	public async getUserByUsername(username: string) {

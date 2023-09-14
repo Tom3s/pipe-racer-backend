@@ -1,4 +1,5 @@
 import { BadREquestError } from "../Errors/BadRequestError";
+import { EmailTakenError } from "../Errors/EmailTakeError";
 import { InvalidCredentialsError } from "../Errors/InvalidCredentialsError";
 import { InvalidEmailError } from "../Errors/InvalidEmailError";
 import { PassworTooWeakError } from "../Errors/PasswordTooWeakError";
@@ -20,6 +21,15 @@ export class AuthenticationService {
 		.then((foundUser) => {
 			if (foundUser) {
 				throw new UsernameTakenError();
+			}
+		})
+
+		await this.userRepository.exists({
+			email: email
+		})
+		.then((foundUser) => {
+			if (foundUser) {
+				throw new EmailTakenError();
 			}
 		})
 		

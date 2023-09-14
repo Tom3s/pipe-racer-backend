@@ -44,7 +44,15 @@ export class TrackService {
 	}
 
 	async getTrack(trackId: Types.ObjectId): Promise<ITrack | null> {
-		return this.trackRepository.get(trackId);
+		return this.trackRepository.get(trackId).then((track) => {
+			if (track === null) {
+				return null;
+			}
+			return {
+				...track.toObject(),
+				uploadDate: track._id.getTimestamp()
+			} as ITrack;
+		});
 	}
 
 	incrementDownloadCount(trackId: Types.ObjectId) {
