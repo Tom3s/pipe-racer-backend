@@ -77,7 +77,7 @@ export class AuthenticationService {
 				throw new UsernameTakenError();
 			}
 			const loginDate = new Date();
-			return new ClientSessionData(foundUser, loginDate.toISOString(), this.generateSessionToken(username, foundUser, loginDate));
+			return new ClientSessionData(foundUser, loginDate.toISOString(), this.generateSessionToken(username, foundUser, loginDate), true);
 		})
 	}
 

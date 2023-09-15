@@ -34,6 +34,7 @@ export interface IClientSessionData {
 	loginDate: string;
 	profilePictureUrl: string;
 	sessionToken: string;
+	guest: boolean;
 }
 
 export class ClientSessionData implements IClientSessionData {	
@@ -44,7 +45,8 @@ export class ClientSessionData implements IClientSessionData {
 	constructor(
 		user: IUser,
 		public loginDate: string,
-		public sessionToken: string
+		public sessionToken: string,
+		public guest: boolean = false
 	) {
 		this.username = user.username;
 		this.userId = user._id.toHexString();
