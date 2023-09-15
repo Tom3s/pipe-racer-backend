@@ -9,6 +9,7 @@ export interface IUser extends Document {
 	passwordHash?: string;
 	profilePictureFileName?: string;
 	admin: boolean;
+	guest: boolean;
 }
 
 export const UserSchema = new Schema({
@@ -17,7 +18,8 @@ export const UserSchema = new Schema({
 	email: String,
 	passwordHash: String,
 	profilePictureFileName: String,
-	admin: { type: Boolean, required: true, default: false }
+	admin: { type: Boolean, required: true, default: false },
+	guest: { type: Boolean, required: true, default: false },
 });
 
 export const User = mongoose.model<IUser>("User", UserSchema);

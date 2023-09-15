@@ -69,10 +69,11 @@ export class AuthenticationService {
 			if (!foundUser) {
 				foundUser = await this.userRepository.save({
 					username: username,
-					passwordHash: "guest",
+					passwordHash: "",
 					email: "",
+					guest: true,
 				} as IUser);
-			} else if (foundUser.passwordHash !== "guest") {
+			} else if (!foundUser.guest) {
 				throw new UsernameTakenError();
 			}
 			const loginDate = new Date();
