@@ -28,6 +28,9 @@ export class LeaderboardService {
 				},
 			},
 			{
+				$sort: { "fastestRun.time": 1 }
+			},
+			{
 				$replaceRoot: { newRoot: "$fastestRun" }, // Replace the root document with the fastest run
 			},
 			{ $lookup: { from: "users", localField: "user", foreignField: "_id", as: "user" } },
@@ -64,6 +67,9 @@ export class LeaderboardService {
 					_id: "$user",
 					fastestRun: { $first: "$$ROOT" }, // Keep the entire document of the fastest run
 				},
+			},
+			{
+				$sort: { "fastestRun.bestLap": 1 }
 			},
 			{
 				$replaceRoot: { newRoot: "$fastestRun" }, // Replace the root document with the fastest run
