@@ -53,8 +53,13 @@ export const setupAuthenticationRoutes = (app: Express, authService: Authenticat
 	app.get(`${basePath}/confirm`, (request: Request, response: Response) => {
 		const token = request.query.token as string;
 		try {
-			authService.confirmRegistration(token);
-			sendOKResponse(response, "Registration confirmed.");
+			authService.confirmRegistration(token)
+				.then((sessionData) => {
+					sendOKResponse(response, "Registration confirmed.");
+				}
+				).catch((error) => {
+					sendErrorResponse(response, error);
+				});
 		} catch (error: any) {
 			sendErrorResponse(response, error);
 		}
