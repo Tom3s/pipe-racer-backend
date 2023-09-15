@@ -61,6 +61,25 @@ export class AuthenticationService {
 		})
 	}
 
+	async loginAsGuest(username: string): Promise<ClientSessionData> {
+		return this.userRepository.exists({
+			username: username,
+		})
+		.then(async (foundUser) => {
+			if (!foundUser) {
+				foundUser = await this.userRepository.save({
+					username: username,
+					passwordHash: "guest",
+					email: "",
+				} as IUser);
+			} else if (foundUser.passwordHash !== "guest") {
+				throw new UsernameTakenError();
+			}
+			const loginDate = new Date();
+			return new ClientSessionData(foundUser, loginDate.toISOString(), this.generateSessionToken(username, foundUser, loginDate));
+		})
+	}
+
 
 
 	private generateRegistrationToken(username: string, password: string, email: string): string {

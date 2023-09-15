@@ -71,4 +71,15 @@ export const setupAuthenticationRoutes = (app: Express, authService: Authenticat
 				sendErrorResponse(response, error);
 			});
 	});
+
+	app.post(`${basePath}/guest`, async (request: Request, response: Response) => {
+		const username = request.body.username;
+		authService.loginAsGuest(username)
+			.then((sessionData) => {
+				sendOKResponse(response, sessionData);
+			}
+			).catch((error) => {
+				sendErrorResponse(response, error);
+			});
+	});
 };
