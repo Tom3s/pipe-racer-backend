@@ -2,6 +2,8 @@ import { Types } from "mongoose";
 import { TrackRepository } from "../Repositories/TrackRepository";
 import { ITrack } from "../Models/Track";
 import { TrackFileService } from "./TrackFileService";
+import { TrackNotFoundError } from "../Errors/TrackNotFoundError";
+import { TrackDeletionError } from "../Errors/TrackDeletionError";
 
 export class TrackService {
 	private trackRepository: TrackRepository;
@@ -11,6 +13,8 @@ export class TrackService {
 		this.trackRepository = trackRepository;
 		this.trackFileService = trackFileService;
 	}
+
+	// CREATE
 
 	async uploadTrack(track: any, author: Types.ObjectId, authorName: string): Promise<ITrack> {
 		const newTrack = {
@@ -32,6 +36,12 @@ export class TrackService {
 			})
 	}
 
+	incrementDownloadCount(trackId: Types.ObjectId) {
+		this.trackRepository.updateQuery(trackId, { $inc: { downloads: 1 } });
+	}
+
+	// READ
+
 	async getAllTracks(): Promise<ITrack[]> {
 		return this.trackRepository.getAll().then((tracks: ITrack[]) => {
 			return tracks.map((track) => {
@@ -46,7 +56,7 @@ export class TrackService {
 	async getTrack(trackId: Types.ObjectId): Promise<ITrack | null> {
 		return this.trackRepository.get(trackId).then((track) => {
 			if (track === null) {
-				return null;
+				throw new TrackNotFoundError();
 			}
 			return {
 				...track.toObject(),
@@ -55,7 +65,19 @@ export class TrackService {
 		});
 	}
 
-	incrementDownloadCount(trackId: Types.ObjectId) {
-		this.trackRepository.updateQuery(trackId, { $inc: { downloads: 1 } });
+	// UPDATE - tracks are not editable. this is to keep leaderboard integrity
+
+	// DELETE
+
+	async deleteTrack(trackId: Types.ObjectId, userId: Types.ObjectId): Promise<ITrack | null> {
+		return this.trackRepository.removeByUser(trackId, userId).then((track) => {
+			if (track === null) {
+				throw new TrackDeletionError();
+			}
+			this.trackFileService.deleteTrackFile(trackId.toHexString());
+			return track;
+		});
 	}
+
+
 }

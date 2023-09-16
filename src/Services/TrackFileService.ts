@@ -25,4 +25,12 @@ export class TrackFileService {
 		}
 		return trackPath;
 	}
+
+	deleteTrackFile(trackId: string): void {
+		const trackPath = `${this.trackFileDirectory}/${trackId}.json`;
+		if (!fs.existsSync(trackPath)) {
+			throw new TrackNotFoundError();
+		}
+		fs.unlinkSync(trackPath);
+	}
 }

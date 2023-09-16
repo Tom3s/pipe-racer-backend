@@ -20,4 +20,8 @@ export class TrackRepository extends Repository<ITrack> {
 			select: "username _id"
 		});
 	}
+
+	removeByUser(trackId: Types.ObjectId, userId: Types.ObjectId): Promise<ITrack | null> {
+		return this.model.findOneAndDelete({ _id: trackId, author: userId }).exec();
+	}
 };

@@ -11,6 +11,8 @@ import { TrackNotFoundError } from '../Errors/TrackNotFoundError';
 export const setupTrackRoutes = (app: Express, trackService: TrackService, trackFileService: TrackFileService) => {
 	const basePath = '/api/tracks';
 
+	// CREATE
+
 	app.post(`${basePath}/upload`, async (request: Request, response: Response) => {
 		const sessionToken = request.header('Session-Token') as string;
 		try {
@@ -24,6 +26,8 @@ export const setupTrackRoutes = (app: Express, trackService: TrackService, track
 		}
 	});
 
+	// READ
+
 	app.get(`${basePath}`, (request: Request, response: Response) => {
 		trackService.getAllTracks()
 			.then((tracks) => {
@@ -36,12 +40,11 @@ export const setupTrackRoutes = (app: Express, trackService: TrackService, track
 		const objectId = createObjectId(trackId);
 		trackService.getTrack(objectId)
 			.then((track) => {
-				if (track === null) {
-					sendErrorResponse(response, new TrackNotFoundError());
-					return;
-				}
 				sendOKResponse(response, track);
 			})
+			.catch((error) => {
+				sendErrorResponse(response, error);
+			});
 	});
 
 	app.get(`${basePath}/download/:id`, (request: Request, response: Response) => {
@@ -51,6 +54,22 @@ export const setupTrackRoutes = (app: Express, trackService: TrackService, track
 			const trackId = request.params.id as string;
 			trackService.incrementDownloadCount(createObjectId(trackId));
 			response.sendFile(trackFileService.getTrackFile(trackId));
+		} catch (error: any) {
+			sendErrorResponse(response, error);
+		}
+	});
+
+	// UPDATE - not available for tracks
+
+	// DELETE
+
+	app.delete(`${basePath}/:id`, async (request: Request, response: Response) => {
+		const sessionToken = request.header('Session-Token') as string;
+		try {
+			const sessionData: SessionData = AuthenticationService.verifySessionToken(sessionToken);
+			const trackId = request.params.id as string;
+			await trackService.deleteTrack(createObjectId(trackId), sessionData.userId);
+			sendOKResponse(response, "Track deleted.");
 		} catch (error: any) {
 			sendErrorResponse(response, error);
 		}
