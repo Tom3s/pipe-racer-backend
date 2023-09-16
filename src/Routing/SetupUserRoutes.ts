@@ -42,18 +42,13 @@ export const setupUserRoutes = (app: Express, userService: UserService, imageFil
 
 	// UPDATE
 
-	app.put(`${basePath}`, (request: Request, response: Response) => {
+	app.put(`${basePath}`, async (request: Request, response: Response) => {
 		const sessionToken = request.header('Session-Token') as string;
 		try {
 			const sessionData: SessionData = AuthenticationService.verifySessionToken(sessionToken);
 
-			userService.updateUser(sessionData.userId, request.body)
-				.then((user) => {
-					sendOKResponse(response, user);
-				})
-				.catch((error) => {
-					sendErrorResponse(response, error);
-				});
+			const updatedUser = await userService.updateUser(sessionData.userId, request.body)
+			sendOKResponse(response, updatedUser);
 		} catch (error: any) {
 			sendErrorResponse(response, error);
 		}
@@ -77,18 +72,13 @@ export const setupUserRoutes = (app: Express, userService: UserService, imageFil
 
 	// DELETE
 
-	app.delete(`${basePath}`, (request: Request, response: Response) => {
+	app.delete(`${basePath}`, async (request: Request, response: Response) => {
 		const sessionToken = request.header('Session-Token') as string;
 		try {
 			const sessionData: SessionData = AuthenticationService.verifySessionToken(sessionToken);
 
-			userService.deleteUser(sessionData.userId)
-				.then((user) => {
-					sendOKResponse(response, user);
-				})
-				.catch((error) => {
-					sendErrorResponse(response, error);
-				});
+			const deletedUser = await userService.deleteUser(sessionData.userId)
+			sendOKResponse(response, deletedUser);
 		} catch (error: any) {
 			sendErrorResponse(response, error);
 		}

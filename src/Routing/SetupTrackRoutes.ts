@@ -11,23 +11,14 @@ import { TrackNotFoundError } from '../Errors/TrackNotFoundError';
 export const setupTrackRoutes = (app: Express, trackService: TrackService, trackFileService: TrackFileService) => {
 	const basePath = '/api/tracks';
 
-	app.post(`${basePath}/upload`, (request: Request, response: Response) => {
+	app.post(`${basePath}/upload`, async (request: Request, response: Response) => {
 		const sessionToken = request.header('Session-Token') as string;
 		try {
 			const sessionData: SessionData = AuthenticationService.verifySessionToken(sessionToken);
 			const trackData = request.body;
 
-			// console.log(trackData);
-
-			trackService.uploadTrack(trackData, sessionData.userId, sessionData.username)
-				.then((track) => {
-					console.log("No error")
-					sendOKResponse(response, track);
-				})
-				.catch((error) => {
-					console.log("Error status", error?.statusCode);
-					sendErrorResponse(response, error);
-				});
+			const track = await trackService.uploadTrack(trackData, sessionData.userId, sessionData.username);
+			sendOKResponse(response, track);
 		} catch (error: any) {
 			sendErrorResponse(response, error);
 		}

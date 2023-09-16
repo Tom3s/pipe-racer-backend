@@ -2,6 +2,7 @@ import { Types } from "mongoose";
 import { UserRepository } from "../Repositories/UserRepository";
 import { ImageFileService } from "./ImageFileService";
 import { generatePasswordHash, verifyEmailValidity, verifyPasswordStrength } from "../Global/CredentialHandler";
+import { IUser } from "../Models/User";
 
 export class UserService {
 	private userRepository: UserRepository;
@@ -10,7 +11,7 @@ export class UserService {
 		this.userRepository = userRepository;
 	}
 
-	async getUserById(userId: Types.ObjectId) {
+	async getUserById(userId: Types.ObjectId): Promise<Partial<IUser>> {
 		const user = await this.userRepository.get(userId);
 		return {
 			...user?.toObject(),
@@ -18,15 +19,15 @@ export class UserService {
 		}
 	}
 
-	async getUserByUsername(username: string) {
+	async getUserByUsername(username: string): Promise<IUser[]> {
 		return this.userRepository.getQuery({ username: username });
 	}
 
-	async getAllUsers() {
+	async getAllUsers(): Promise<IUser[]> {
 		return this.userRepository.getAll();
 	}
 
-	async updateUser(userId: Types.ObjectId, userUpdates: any) {
+	async updateUser(userId: Types.ObjectId, userUpdates: any): Promise<IUser | null> {
 		if (userUpdates.password !== undefined) {
 			verifyPasswordStrength(userUpdates.password);
 			userUpdates.passwordHash = generatePasswordHash(userUpdates.password)
@@ -38,7 +39,7 @@ export class UserService {
 		return this.userRepository.update(userId, userUpdates);
 	}
 
-	async deleteUser(userId: Types.ObjectId) {
+	async deleteUser(userId: Types.ObjectId): Promise<IUser | null> {
 		return this.userRepository.remove(userId);
 	}
 }

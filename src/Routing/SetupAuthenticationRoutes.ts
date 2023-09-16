@@ -50,22 +50,17 @@ export const setupAuthenticationRoutes = (app: Express, authService: Authenticat
 			});
 	});
 
-	app.get(`${basePath}/confirm`, (request: Request, response: Response) => {
+	app.get(`${basePath}/confirm`, async (request: Request, response: Response) => {
 		const token = request.query.token as string;
 		try {
-			authService.confirmRegistration(token)
-				.then((sessionData) => {
-					sendOKResponse(response, "Registration confirmed.");
-				}
-				).catch((error) => {
-					sendErrorResponse(response, error);
-				});
+			await authService.confirmRegistration(token);
+			sendOKResponse(response, "Registration confirmed.");
 		} catch (error: any) {
 			sendErrorResponse(response, error);
 		}
 	});
 
-	app.post(`${basePath}/login`, async (request: Request, response: Response) => {
+	app.post(`${basePath}/login`, (request: Request, response: Response) => {
 		const username = request.body.username;
 		const password = request.body.password;
 		authService.login(username, password)
@@ -77,7 +72,7 @@ export const setupAuthenticationRoutes = (app: Express, authService: Authenticat
 			});
 	});
 
-	app.post(`${basePath}/guest`, async (request: Request, response: Response) => {
+	app.post(`${basePath}/guest`, (request: Request, response: Response) => {
 		const username = request.body.username;
 		authService.loginAsGuest(username)
 			.then((sessionData) => {
