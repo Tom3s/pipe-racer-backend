@@ -6,13 +6,13 @@ import { Track } from "./Track";
 const { Schema } = mongoose;
 
 export interface IRating extends Document {
-	userId: Types.ObjectId;
-	trackId: Types.ObjectId;
+	userId?: Types.ObjectId;
+	trackId?: Types.ObjectId;
 	rating: number;
 }
 
 export const RatingSchema = new Schema({
-	user: {
+	userId: {
 		type: Schema.Types.ObjectId,
 		ref: "User",
 		required: true,
@@ -22,7 +22,7 @@ export const RatingSchema = new Schema({
 			},
 		}
 	},
-	track: {
+	trackId: {
 		type: Schema.Types.ObjectId,
 		ref: "Track",
 		required: true,

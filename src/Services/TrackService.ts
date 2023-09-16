@@ -4,15 +4,22 @@ import { ITrack } from "../Models/Track";
 import { TrackFileService } from "./TrackFileService";
 import { TrackNotFoundError } from "../Errors/TrackNotFoundError";
 import { TrackDeletionError } from "../Errors/TrackDeletionError";
+import { RatingRepository } from "../Repositories/RatingRepository";
+import { IRating } from "../Models/Rating";
 
 export class TrackService {
-	private trackRepository: TrackRepository;
-	private trackFileService: TrackFileService;
+	// private trackRepository: TrackRepository;
+	// private trackFileService: TrackFileService;
 
-	constructor(trackRepository: TrackRepository, trackFileService: TrackFileService) {
-		this.trackRepository = trackRepository;
-		this.trackFileService = trackFileService;
-	}
+	// constructor(trackRepository: TrackRepository, trackFileService: TrackFileService) {
+	// 	this.trackRepository = trackRepository;
+	// 	this.trackFileService = trackFileService;
+	// }
+	constructor(
+		private trackRepository: TrackRepository,
+		private ratingRepository: RatingRepository,
+		private trackFileService: TrackFileService,
+	) {}
 
 	// CREATE
 
@@ -79,5 +86,21 @@ export class TrackService {
 		});
 	}
 
+
+	// MISC
+
+	async calculateTrackRating(trackId: Types.ObjectId): Promise<IRating> {
+		return this.ratingRepository.getQuery({ trackId: trackId }).then((ratings) => {
+			let totalRating = 0;
+			ratings.forEach((rating) => {
+				totalRating += rating.rating;
+			});
+			const newRating = ratings.length === 0 ? 0 : totalRating / ratings.length;
+			this.trackRepository.updateQuery(trackId, { rating: newRating });
+			return {
+				rating: newRating,
+			} as IRating;
+		});
+	}
 
 }
