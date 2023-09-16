@@ -97,30 +97,4 @@ export class LeaderboardService {
 				}) as ICompletedRun[];
 			});
 	}
-
-	getPlacement(userId: Types.ObjectId, trackId: Types.ObjectId): Promise<ICompletedRun[]> {
-		const pipeline = [
-			{ $match: { track: trackId } },
-			{ $sort: { time: 1 } },
-			{
-				$group: {
-					_id: '$user',
-					documents: {
-						$push: '$$ROOT',
-					},
-				},
-			},
-			{
-				$project: {
-					placement: {
-						$indexOfArray: ['$documents.user', userId],
-					},
-					user: {
-						$arrayElemAt: ['$documents.user', 0],
-					},
-				},
-			},
-		];
-		return this.completedRunRepository.aggregate(pipeline);
-	}
 }

@@ -48,7 +48,7 @@ export class AuthenticationService {
 		return this.userRepository.save(decodedToken)
 	}
 
-	async login(username: string, password: string): Promise<ClientSessionData> {
+	login(username: string, password: string): Promise<ClientSessionData> {
 		return this.userRepository.exists({
 			username: username,
 			passwordHash: generatePasswordHash(password)
@@ -62,7 +62,7 @@ export class AuthenticationService {
 		})
 	}
 
-	async loginAsGuest(username: string): Promise<ClientSessionData> {
+	loginAsGuest(username: string): Promise<ClientSessionData> {
 		return this.userRepository.exists({
 			username: username,
 		})

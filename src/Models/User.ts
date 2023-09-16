@@ -10,6 +10,7 @@ export interface IUser extends Document {
 	profilePictureFileName?: string;
 	admin: boolean;
 	guest: boolean;
+	profilePictureUrl?: string;
 }
 
 export const UserSchema = new Schema({
