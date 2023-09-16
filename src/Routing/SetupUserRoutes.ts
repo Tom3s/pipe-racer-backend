@@ -12,6 +12,9 @@ export const setupUserRoutes = (app: Express, userService: UserService, imageFil
 
 	const bodyParser = require('body-parser');
 
+	// CREATE - implemented in auth service
+
+	// READ
 	app.get(`${basePath}`, (request: Request, response: Response) => {
 		userService.getAllUsers()
 			.then((users) => {
@@ -30,6 +33,32 @@ export const setupUserRoutes = (app: Express, userService: UserService, imageFil
 			});
 	});
 
+	app.get(`${basePath}/picture/:id`, (request: Request, response: Response) => {
+		const userId = request.params.id;
+		const profilePicture = imageFileService.getProfilePicture(userId);
+
+		response.status(StatusCodes.OK).sendFile(profilePicture);
+	});
+
+	// UPDATE
+
+	app.put(`${basePath}`, (request: Request, response: Response) => {
+		const sessionToken = request.header('Session-Token') as string;
+		try {
+			const sessionData: SessionData = AuthenticationService.verifySessionToken(sessionToken);
+
+			userService.updateUser(sessionData.userId, request.body)
+				.then((user) => {
+					sendOKResponse(response, user);
+				})
+				.catch((error) => {
+					sendErrorResponse(response, error);
+				});
+		} catch (error: any) {
+			sendErrorResponse(response, error);
+		}
+	});
+
 	app.post(`${basePath}/uploadPicture`, bodyParser.raw({
 		type: 'image/*',
 		limit: '10mb'
@@ -46,10 +75,23 @@ export const setupUserRoutes = (app: Express, userService: UserService, imageFil
 		}
 	});
 
-	app.get(`${basePath}/picture/:id`, (request: Request, response: Response) => {
-		const userId = request.params.id;
-		const profilePicture = imageFileService.getProfilePicture(userId);
+	// DELETE
 
-		response.status(StatusCodes.OK).sendFile(profilePicture);
+	app.delete(`${basePath}`, (request: Request, response: Response) => {
+		const sessionToken = request.header('Session-Token') as string;
+		try {
+			const sessionData: SessionData = AuthenticationService.verifySessionToken(sessionToken);
+
+			userService.deleteUser(sessionData.userId)
+				.then((user) => {
+					sendOKResponse(response, user);
+				})
+				.catch((error) => {
+					sendErrorResponse(response, error);
+				});
+		} catch (error: any) {
+			sendErrorResponse(response, error);
+		}
 	});
+
 }

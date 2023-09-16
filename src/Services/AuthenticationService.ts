@@ -37,6 +37,7 @@ export class AuthenticationService {
 		verifyEmailValidity(email);
 
 		const confirmUrl = process.env.HOST + ":" + process.env.PORT + "/api/auth/confirm?token=" + this.generateRegistrationToken(username, password, email);
+		console.log(confirmUrl);
 		return confirmUrl;
 	}
 
@@ -93,12 +94,6 @@ export class AuthenticationService {
 	}
 
 	private generateSessionToken(username: string, foundUser: IUser, loginDate: Date): string {
-		// return generateJWToken(new SessionData(
-		// 	username,
-		// 	foundUser._id.toHexString(),
-		// 	foundUser.admin,
-		// 	loginDate
-		// ).to);
 		return generateJWToken({
 			username: username,
 			userId: foundUser._id.toHexString(),

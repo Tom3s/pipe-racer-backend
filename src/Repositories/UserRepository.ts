@@ -23,4 +23,12 @@ export class UserRepository extends Repository<IUser> {
 		pipeline.push({ $project: { email: 0, passwordHash: 0, admin: 0 } });
 		return this.model.aggregate(pipeline).exec();
 	}
+
+	update(entityId: Types.ObjectId, entityUpdates: Partial<IUser>): Promise<IUser | null> {
+		return this.model.findByIdAndUpdate(entityId, entityUpdates, { new: true, runValidators: true }).select("-passwordHash -admin").exec();
+	}
+
+	remove(entityId: Types.ObjectId): Promise<IUser | null> {
+		return this.model.findByIdAndDelete(entityId).select("-passwordHash -admin").exec();
+	}
 };
