@@ -14,6 +14,9 @@ import { TrackRepository } from './Repositories/TrackRepository';
 import { CompletedRunRepository } from './Repositories/CompletedRunRepository';
 import { LeaderboardService } from './Services/LeaderboardService';
 import { setupLeaderboardRoutes } from './Routing/SetupLeaderboardRoutes';
+import { RatingRepository } from './Repositories/RatingRepository';
+import { RatingService } from './Services/RatingService';
+import { setupRatingRoutes } from './Routing/SetupRatingRoutes';
 
 dotenv.config();
 
@@ -43,17 +46,20 @@ connectToDatabase();
 const userRepository = new UserRepository();
 const trackRepository = new TrackRepository();
 const completedRunRepository = new CompletedRunRepository();
+const ratingRepository = new RatingRepository();
 const imageFileService = new ImageFileService();
 const trackFileService = new TrackFileService();
-const trackService = new TrackService(trackRepository, trackFileService);
+const trackService = new TrackService(trackRepository, ratingRepository, trackFileService);
 const authService = new AuthenticationService(userRepository);
 const userService = new UserService(userRepository);
+const ratingService = new RatingService(ratingRepository, trackService);
 const leaderboardService = new LeaderboardService(completedRunRepository);
 
 setupAuthenticationRoutes(app, authService);
 setupUserRoutes(app, userService, imageFileService);
 setupTrackRoutes(app, trackService, trackFileService);
 setupLeaderboardRoutes(app, leaderboardService);
+setupRatingRoutes(app, ratingService);
 
 app.get('/', (req: Request, res: Response) => {
   res.send('Express + TypeScript Server');
