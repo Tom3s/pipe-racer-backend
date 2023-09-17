@@ -76,6 +76,10 @@ const credentials = {
 
 const httpsServer = https.createServer(credentials, app);
 
-httpsServer.listen(port, () => {
-  console.log(`⚡️[server]: Server is running at https://localhost:${port}`);
+httpsServer.listen(443, () => {
+  console.log(`⚡️[server]: Server is running at https://localhost:443`);
+});
+
+app.listen(80, () => {
+  console.log(`⚡️[server]: Server is running at http://localhost:80`);
 });
