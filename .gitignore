@@ -128,3 +128,5 @@ dist
 
 .vscode/*
 public/tracks/*
+cert.pem
+key.pem

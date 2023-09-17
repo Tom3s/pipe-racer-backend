@@ -17,15 +17,14 @@ import { setupLeaderboardRoutes } from './Routing/SetupLeaderboardRoutes';
 import { RatingRepository } from './Repositories/RatingRepository';
 import { RatingService } from './Services/RatingService';
 import { setupRatingRoutes } from './Routing/SetupRatingRoutes';
+import https from 'https';
+import fs from 'fs';
+import path from 'path';
 
 dotenv.config();
 
 const app: Express = express();
 const port = process.env.PORT;
-
-// app.use(express.json({limit: '10mb'}));
-// app.use(express.urlencoded({limit: '10mb'}));
-// app.use(express.bodyParser({limit: '10mb'}));
 
 const cors = require('cors');
 app.use(cors({
@@ -65,6 +64,18 @@ app.get('/', (req: Request, res: Response) => {
   res.send('Express + TypeScript Server');
 });
 
-app.listen(port, () => {
-  console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
+const privateKeyPath = path.join(__dirname, '../key.pem');
+const certificatePath = path.join(__dirname, '../cert.pem');
+const privateKey = fs.readFileSync(privateKeyPath, 'utf8');
+const certificate = fs.readFileSync(certificatePath, 'utf8');
+const credentials = { 
+	key: privateKey, 
+	cert: certificate,
+	passphrase: process.env.SSL_PASSPHRASE,
+};
+
+const httpsServer = https.createServer(credentials, app);
+
+httpsServer.listen(port, () => {
+  console.log(`⚡️[server]: Server is running at https://localhost:${port}`);
 });
