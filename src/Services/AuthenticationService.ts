@@ -36,7 +36,8 @@ export class AuthenticationService {
 		verifyPasswordStrength(password);
 		verifyEmailValidity(email);
 
-		const confirmUrl = process.env.HOST + ":" + process.env.PORT + "/api/auth/confirm?token=" + this.generateRegistrationToken(username, password, email);
+		// const confirmUrl = process.env.HOST + ":" + process.env.PORT + "/api/auth/confirm?token=" + this.generateRegistrationToken(username, password, email);
+		const confirmUrl = process.env.WEBSITE + "/confirm?token=" + this.generateRegistrationToken(username, password, email);
 		console.log(confirmUrl);
 		return confirmUrl;
 	}
