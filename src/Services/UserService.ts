@@ -15,7 +15,7 @@ export class UserService {
 		const user = await this.userRepository.get(userId);
 		return {
 			...user?.toObject(),
-			profilePictureUrl: process.env.HOST + ":" + process.env.PORT + "/api/users/picture/" + user?._id.toHexString()
+			profilePictureUrl: process.env.HOST + "/api/users/picture/" + user?._id.toHexString()
 		}
 	}
 
