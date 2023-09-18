@@ -4,6 +4,7 @@ import { IUserStats } from "../Models/UserStats";
 import { TrackService } from "./TrackService";
 import { RatingService } from "./RatingService";
 import { ITrackStat } from "../Models/TrackStat";
+import { createObjectId } from "../Global/CreateObjectId";
 
 export class UserStatService {
 	constructor(
@@ -39,19 +40,10 @@ export class UserStatService {
 		const totalFinishes = trackStats.reduce((sum, stat) => {
 			return sum + stat.nrFinishes;
 		}, 0);
+
 		// max(number of times track was played)
-		// const trackPlaytimeMap = new Map<any, number>(); // Map to store trackId -> totalPlaytime
+		const trackPlaytimes = {} as Record<string, number>;
 
-		// trackStats.forEach((trackStat) => {
-		// 	const { track, playtime } = trackStat;
-		// 	if (trackPlaytimeMap.has(track)) {
-		// 		trackPlaytimeMap.set(track, trackPlaytimeMap.get(track) as number + playtime);
-		// 	} else {
-		// 		trackPlaytimeMap.set(track, playtime);
-		// 	}
-		// });
-
-		const trackPlaytimes = {} as any;
 		trackStats.forEach((trackStat) => {
 			const { track, playtime } = trackStat;
 			const trackId = track.toHexString();
@@ -62,21 +54,23 @@ export class UserStatService {
 			}
 		});
 
-		const [mostPlayedTrack, mostPlayedTrackTime] = [...trackPlaytimes.entries()].reduce((max, entry) => {
+		const [mostPlayedTrack, mostPlayedTrackTime] = Object.entries(trackPlaytimes).reduce((max, entry) => {
 			return entry[1] > max[1] ? entry : max;
-		}, [null, 0]);
+		}, ["", 0]);
 		// uploadedTracks.length
 		const tracksUploaded = tracks.length;
 
-		const tracksPlayed = trackPlaytimes.entries().length;
+		const tracksPlayed = Object.keys(trackPlaytimes).length;
 
 		const tracksRated = ratings.length;
 
+		const mostPlayedTrackId = createObjectId(mostPlayedTrack);
 
+		const mostPlayedTrackObject = await this.trackService.getTrack(mostPlayedTrackId);
 
 		return {
 			user: userId,
-			mostPlayedTrack: mostPlayedTrack,
+			mostPlayedTrack: mostPlayedTrackObject,
 			totalPlaytime: ingamePlaytime + editorPlaytime,
 			ingamePlaytime: ingamePlaytime,
 			editorPlaytime: editorPlaytime,
