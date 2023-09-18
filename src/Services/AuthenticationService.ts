@@ -1,4 +1,5 @@
 import { BadREquestError } from "../Errors/BadRequestError";
+import { EmailAlreadyConfirmedError } from "../Errors/EmailAlreadyConfirmedError";
 import { EmailTakenError } from "../Errors/EmailTakeError";
 import { InvalidCredentialsError } from "../Errors/InvalidCredentialsError";
 import { InvalidEmailError } from "../Errors/InvalidEmailError";
@@ -48,9 +49,10 @@ export class AuthenticationService {
 		.then((foundUser) => {
 			if (foundUser && foundUser.guest === true) {
 				return this.userRepository.update(foundUser._id, decodedToken);
-			} else {
+			} else if (!foundUser){
 				return this.userRepository.save(decodedToken);
 			}
+			throw new EmailAlreadyConfirmedError();
 		})
 	}
 
