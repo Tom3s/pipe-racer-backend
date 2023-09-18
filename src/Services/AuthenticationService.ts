@@ -19,7 +19,7 @@ export class AuthenticationService {
 			username: username
 		})
 		.then((foundUser) => {
-			if (foundUser) {
+			if (foundUser?.guest === false) {
 				throw new UsernameTakenError();
 			}
 		})
