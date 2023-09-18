@@ -15,9 +15,7 @@ export class AuthenticationService {
 
 	async getRegistrationToken(username: string, password: string, email: string): Promise<string> {
 		this.verifyFieldsForRegistration(username, password, email);
-		await this.userRepository.exists({
-			username: username
-		})
+		await this.userRepository.existsByUsername(username)
 		.then((foundUser) => {
 			if (foundUser?.guest === false) {
 				throw new UsernameTakenError();
@@ -37,7 +35,7 @@ export class AuthenticationService {
 		verifyEmailValidity(email);
 
 		// const confirmUrl = process.env.HOST + ":" + process.env.PORT + "/api/auth/confirm?token=" + this.generateRegistrationToken(username, password, email);
-		const confirmUrl = process.env.WEBSITE + "/confirm?token=" + this.generateRegistrationToken(username, password, email);
+		const confirmUrl = process.env.WEBSITE + "/confirm?token=" + this.generateRegistrationToken(username, password, email.toLowerCase());
 		console.log(confirmUrl);
 		return confirmUrl;
 	}
@@ -46,9 +44,7 @@ export class AuthenticationService {
 		const decodedToken = decodeTokenData(token);
 		verifyTokenExpirationDate(decodedToken.date);
 
-		return this.userRepository.exists({
-			username: decodedToken.username
-		})
+		return this.userRepository.existsByUsername(decodedToken.username)
 		.then((foundUser) => {
 			if (foundUser && foundUser.guest === true) {
 				return this.userRepository.update(foundUser._id, decodedToken);
@@ -56,13 +52,11 @@ export class AuthenticationService {
 				return this.userRepository.save(decodedToken);
 			}
 		})
-
-		// return this.userRepository.save(decodedToken)
 	}
 
 	login(username: string, password: string): Promise<ClientSessionData> {
 		return this.userRepository.exists({
-			username: username,
+			username: { $regex: new RegExp("^" + username + "$", "i")},
 			passwordHash: generatePasswordHash(password)
 		})
 		.then((foundUser) => {
@@ -75,9 +69,7 @@ export class AuthenticationService {
 	}
 
 	loginAsGuest(username: string): Promise<ClientSessionData> {
-		return this.userRepository.exists({
-			username: username,
-		})
+		return this.userRepository.existsByUsername(username)
 		.then(async (foundUser) => {
 			if (!foundUser) {
 				foundUser = await this.userRepository.save({

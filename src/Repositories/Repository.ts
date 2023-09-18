@@ -38,6 +38,12 @@ export class Repository<IDataType extends Document> implements IRepository<IData
 		// return this.model.exists(query);
 		return this.model.findOne(query);
 	}
+
+	existsByUsername(username: string): Promise<IDataType | null> {
+		return this.model.findOne({ 
+			username: { $regex: new RegExp("^" + username + "$", "i") }
+		});
+	}
 	
 	aggregate(pipeline: any[]): Promise<IDataType[]> {
 		return this.model.aggregate(pipeline).exec();
