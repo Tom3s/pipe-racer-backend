@@ -46,7 +46,18 @@ export class AuthenticationService {
 		const decodedToken = decodeTokenData(token);
 		verifyTokenExpirationDate(decodedToken.date);
 
-		return this.userRepository.save(decodedToken)
+		return this.userRepository.exists({
+			username: decodedToken.username
+		})
+		.then((foundUser) => {
+			if (foundUser && foundUser.guest === true) {
+				return this.userRepository.update(foundUser._id, decodedToken);
+			} else {
+				return this.userRepository.save(decodedToken);
+			}
+		})
+
+		// return this.userRepository.save(decodedToken)
 	}
 
 	login(username: string, password: string): Promise<ClientSessionData> {
