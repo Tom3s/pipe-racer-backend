@@ -40,23 +40,35 @@ export class UserStatService {
 			return sum + stat.nrFinishes;
 		}, 0);
 		// max(number of times track was played)
-		const trackPlaytimeMap = new Map<any, number>(); // Map to store trackId -> totalPlaytime
+		// const trackPlaytimeMap = new Map<any, number>(); // Map to store trackId -> totalPlaytime
 
+		// trackStats.forEach((trackStat) => {
+		// 	const { track, playtime } = trackStat;
+		// 	if (trackPlaytimeMap.has(track)) {
+		// 		trackPlaytimeMap.set(track, trackPlaytimeMap.get(track) as number + playtime);
+		// 	} else {
+		// 		trackPlaytimeMap.set(track, playtime);
+		// 	}
+		// });
+
+		const trackPlaytimes = {} as any;
 		trackStats.forEach((trackStat) => {
 			const { track, playtime } = trackStat;
-			if (trackPlaytimeMap.has(track)) {
-				trackPlaytimeMap.set(track, trackPlaytimeMap.get(track) as number + playtime);
+			const trackId = track.toHexString();
+			if (trackPlaytimes[trackId] !== undefined) {
+				trackPlaytimes[trackId] += playtime;
 			} else {
-				trackPlaytimeMap.set(track, playtime);
+				trackPlaytimes[trackId] = playtime;
 			}
 		});
-		const [mostPlayedTrack, mostPlayedTrackTime] = [...trackPlaytimeMap.entries()].reduce((max, entry) => {
+
+		const [mostPlayedTrack, mostPlayedTrackTime] = [...trackPlaytimes.entries()].reduce((max, entry) => {
 			return entry[1] > max[1] ? entry : max;
 		}, [null, 0]);
 		// uploadedTracks.length
 		const tracksUploaded = tracks.length;
 
-		const tracksPlayed = trackPlaytimeMap.size;
+		const tracksPlayed = trackPlaytimes.entries().length;
 
 		const tracksRated = ratings.length;
 
