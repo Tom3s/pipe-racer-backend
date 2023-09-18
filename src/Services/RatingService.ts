@@ -43,6 +43,9 @@ export class RatingService {
 		return this.ratingRepo.getAll();
 	}
 
+	getRatingsByUser(userId: Types.ObjectId) {
+		return this.ratingRepo.getQuery({ userId: userId });
+	}
 
 	// UPDATE - same as rateTrack
 

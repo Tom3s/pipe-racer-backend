@@ -38,8 +38,8 @@ export const TrackStatSchema = new Schema({
 	playtime: { type: Number, required: true, default: 0 },
 	nrAttempts: { type: Number, required: true, default: 0 },
 	nrFinishes: { type: Number, required: true, default: 0 },
-	bestLap: { type: Number, required: true, default: 0 },
-	bestTime: { type: Number, required: true, default: 0 },
+	bestLap: { type: Number, required: true, default: 365 * 24 * 60 * 60 * 1000 },
+	bestTime: { type: Number, required: true, default: 365 * 24 * 60 * 60 * 1000 },
 });
 
 export const TrackStat = mongoose.model<ITrackStat>("TrackStat", TrackStatSchema);

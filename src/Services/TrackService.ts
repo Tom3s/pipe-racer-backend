@@ -72,6 +72,17 @@ export class TrackService {
 		});
 	}
 
+	async getTracksByUser(userId: Types.ObjectId): Promise<ITrack[]> {
+		return this.trackRepository.getQuery({ author: userId }).then((tracks) => {
+			return tracks.map((track) => {
+				return {
+					...track.toObject(),
+					uploadDate: track._id.getTimestamp()
+				}
+			}) as ITrack[];
+		});
+	}
+
 	// UPDATE - tracks are not editable. this is to keep leaderboard integrity
 
 	// DELETE
