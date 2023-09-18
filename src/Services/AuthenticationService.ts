@@ -45,6 +45,8 @@ export class AuthenticationService {
 		const decodedToken = decodeTokenData(token);
 		verifyTokenExpirationDate(decodedToken.date);
 
+		decodedToken.guest = false;
+
 		return this.userRepository.existsByUsername(decodedToken.username)
 		.then((foundUser) => {
 			if (foundUser && foundUser.guest === true) {
