@@ -18,5 +18,9 @@ export interface IUserStats {
 	tracksRated: number;
 	totalAttempts: number;
 	totalFinishes: number;
+	placedTrackPieces: number;
+	placedCheckpoints: number;
+	placedProps: number;
+	placedAll: number;
 	
 }

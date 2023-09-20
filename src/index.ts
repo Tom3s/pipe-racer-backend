@@ -25,6 +25,8 @@ import { TrackStatService } from './Services/TrackStatService';
 import { TrackStatRepository } from './Repositories/TrackStatRepository';
 import { UserStatService } from './Services/UserStatService';
 import { migrateCompletedRunsToStats } from './Global/MigrateStats';
+import { EditorStatRepository } from './Repositories/EditorStatRepository';
+import { EditorStatService } from './Services/EditorStatService';
 
 dotenv.config();
 
@@ -51,6 +53,7 @@ const trackRepository = new TrackRepository();
 const completedRunRepository = new CompletedRunRepository();
 const ratingRepository = new RatingRepository();
 const trackStatRepository = new TrackStatRepository();
+const editorStatRepository = new EditorStatRepository();
 
 const imageFileService = new ImageFileService();
 const trackFileService = new TrackFileService();
@@ -60,14 +63,15 @@ const userService = new UserService(userRepository);
 const ratingService = new RatingService(ratingRepository, trackService);
 const leaderboardService = new LeaderboardService(completedRunRepository);
 const trackStatService = new TrackStatService(trackStatRepository);
-const userStatService = new UserStatService(trackStatService, trackService, ratingService);
+const editorStatService = new EditorStatService(editorStatRepository);
+const userStatService = new UserStatService(trackStatService, editorStatService, trackService, ratingService);
 
 setupAuthenticationRoutes(app, authService);
 setupUserRoutes(app, userService, imageFileService);
 setupTrackRoutes(app, trackService, trackFileService);
 setupLeaderboardRoutes(app, leaderboardService);
 setupRatingRoutes(app, ratingService);
-setupStatRoutes(app, trackStatService, userStatService);
+setupStatRoutes(app, trackStatService, editorStatService, userStatService);
 
 const privateKeyPath = path.join(__dirname, '../key.pem');
 const certificatePath = path.join(__dirname, '../cert.pem');

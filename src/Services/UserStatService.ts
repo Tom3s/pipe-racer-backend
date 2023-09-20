@@ -5,10 +5,12 @@ import { TrackService } from "./TrackService";
 import { RatingService } from "./RatingService";
 import { ITrackStat } from "../Models/TrackStat";
 import { createObjectId } from "../Global/CreateObjectId";
+import { EditorStatService } from "./EditorStatService";
 
 export class UserStatService {
 	constructor(
 		private trackStatService: TrackStatService,
+		private editorStatService: EditorStatService,
 		private trackService: TrackService,
 		private ratingService: RatingService,
 	) { }
@@ -22,6 +24,7 @@ export class UserStatService {
 
 	async getGlobalStatsForUser(userId: Types.ObjectId): Promise<IUserStats> {
 		const trackStats = await this.trackStatService.getStatsForUser(userId);
+		const editorStats = await this.editorStatService.getStatsForUser(userId);
 		const tracks = await this.trackService.getTracksByUser(userId);
 		const ratings = await this.ratingService.getRatingsByUser(userId);
 
@@ -30,7 +33,9 @@ export class UserStatService {
 			return sum + stat.playtime;
 		}, 0);
 		// sum(stat.editorPlaytime)
-		const editorPlaytime = 0;
+		const editorPlaytime = editorStats.reduce((sum, stat) => {
+			return sum + stat.editorTime;
+		}, 0);
 
 		// sum(stat.nrAttempts)
 		const totalAttempts = trackStats.reduce((sum, stat) => {
@@ -68,6 +73,18 @@ export class UserStatService {
 
 		const mostPlayedTrackObject = await this.trackService.getTrack(mostPlayedTrackId);
 
+		const placedTrackPieces = editorStats.reduce((sum, stat) => {
+			return sum + stat.placedTrackPieces;
+		}, 0);
+		const placedCheckpoints = editorStats.reduce((sum, stat) => {
+			return sum + stat.placedCheckpoints;
+		}, 0); 
+		const placedProps = editorStats.reduce((sum, stat) => {
+			return sum + stat.placedProps;
+		}, 0);
+		const placedAll = placedTrackPieces + placedCheckpoints + placedProps; 
+
+
 		return {
 			user: userId,
 			mostPlayedTrack: mostPlayedTrackObject,
@@ -79,6 +96,10 @@ export class UserStatService {
 			tracksRated: tracksRated,
 			totalAttempts: totalAttempts,
 			totalFinishes: totalFinishes,
+			placedTrackPieces: placedTrackPieces,
+			placedCheckpoints: placedCheckpoints,
+			placedProps: placedProps,
+			placedAll: placedAll,
 		} as IUserStats;
 
 	}
