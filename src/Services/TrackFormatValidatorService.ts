@@ -36,6 +36,9 @@ export const validateTrackFormat1 = (track: any) => {
 		verifyTrackPiece(trackPiece);
 	}
 
+	if (track.checkPoints.length <= 0) {
+		throw new InvalidTrackFormatError("Track must have at least one checkpoint");
+	}
 	for (const checkPoint of track.checkPoints) {
 		verifyCheckPoint(checkPoint);
 	}
