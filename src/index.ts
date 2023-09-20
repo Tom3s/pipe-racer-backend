@@ -32,9 +32,9 @@ const app: Express = express();
 
 const cors = require('cors');
 app.use(cors({
-    origin: '*',
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'Session-Token']
+	origin: '*',
+	methods: ['GET', 'POST', 'PUT', 'DELETE'],
+	allowedHeaders: ['Content-Type', 'Authorization', 'Session-Token']
 }));
 
 
@@ -84,10 +84,10 @@ const credentials = {
 const httpsServer = https.createServer(credentials, app);
 
 httpsServer.listen(3443, () => {
-  console.log(`⚡️[server]: Server is running at https://localhost:3443`);
+	console.log(`⚡️[server]: Server is running at https://localhost:3443`);
 });
 
 app.listen(3080, () => {
-  console.log(`⚡️[server]: Server is running at http://localhost:3080`);
+	console.log(`⚡️[server]: Server is running at http://localhost:3080`);
 });
 
