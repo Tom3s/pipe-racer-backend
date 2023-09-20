@@ -22,5 +22,6 @@ export interface IUserStats {
 	placedCheckpoints: number;
 	placedProps: number;
 	placedAll: number;
+	nrTests: number;
 	
 }

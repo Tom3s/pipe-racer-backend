@@ -84,6 +84,10 @@ export class UserStatService {
 		}, 0);
 		const placedAll = placedTrackPieces + placedCheckpoints + placedProps; 
 
+		const nrTests = editorStats.reduce((sum, stat) => {
+			return sum + stat.nrTests;
+		}, 0);
+
 
 		return {
 			user: userId,
@@ -100,6 +104,7 @@ export class UserStatService {
 			placedCheckpoints: placedCheckpoints,
 			placedProps: placedProps,
 			placedAll: placedAll,
+			nrTests: nrTests,
 		} as IUserStats;
 
 	}

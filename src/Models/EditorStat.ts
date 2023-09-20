@@ -10,6 +10,7 @@ export interface IEditorStat extends Document {
 	placedCheckpoints: number;
 	placedProps: number;
 	placedAll?: number;
+	nrTests: number;
 }
 
 export const EditorStatSchema = new Schema({
@@ -28,6 +29,7 @@ export const EditorStatSchema = new Schema({
 	placedCheckpoints: { type: Number, required: true, default: 0 },
 	placedProps: { type: Number, required: true, default: 0 },
 	placedAll: { type: Number, required: true, default: 0 },
+	nrTests: { type: Number, required: true, default: 0 },
 });
 
 export const EditorStat = mongoose.model<IEditorStat>("EditorStat", EditorStatSchema);
