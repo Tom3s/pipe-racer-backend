@@ -3,7 +3,7 @@ import { InvalidEmailError } from "../Errors/InvalidEmailError";
 import { PassworTooWeakError } from "../Errors/PasswordTooWeakError";
 
 export const verifyPasswordStrength = (password: string) => {
-	const regex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*[\d@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
+	const regex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*[\d@$!%*#?&._-,])[A-Za-z\d@$!%*#?&._-,]{8,}$/;
 	if (!regex.test(password)) {
 		throw new PassworTooWeakError();
 	}
