@@ -60,7 +60,7 @@ export class TrackService {
 		});
 	}
 
-	async getTrack(trackId: Types.ObjectId): Promise<ITrack | null> {
+	async getTrack(trackId: Types.ObjectId): Promise<ITrack> {
 		return this.trackRepository.get(trackId).then((track) => {
 			if (track === null) {
 				throw new TrackNotFoundError();

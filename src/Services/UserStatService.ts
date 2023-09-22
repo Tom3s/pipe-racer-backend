@@ -7,6 +7,9 @@ import { ITrackStat } from "../Models/TrackStat";
 import { createObjectId } from "../Global/CreateObjectId";
 import { EditorStatService } from "./EditorStatService";
 import { GlobalScoreService } from "./GlobalScoreService";
+import { IGlobalScore } from "../Models/GlobalScore";
+import { ITrack } from "../Models/Track";
+import { IUser } from "../Models/User";
 
 export class UserStatService {
 	constructor(
@@ -73,18 +76,27 @@ export class UserStatService {
 
 		const mostPlayedTrackId = createObjectId(mostPlayedTrack);
 
-		const mostPlayedTrackObject = await this.trackService.getTrack(mostPlayedTrackId);
-
+		const mostPlayedTrackObject = await this.trackService.getTrack(mostPlayedTrackId)
+			.catch((error) => {
+				return {
+					name: "None",
+					author: {
+						username: "Unknown",
+						admin: false,
+						guest: false,
+					} as IUser,
+				} as ITrack;
+			});
 		const placedTrackPieces = editorStats.reduce((sum, stat) => {
 			return sum + stat.placedTrackPieces;
 		}, 0);
 		const placedCheckpoints = editorStats.reduce((sum, stat) => {
 			return sum + stat.placedCheckpoints;
-		}, 0); 
+		}, 0);
 		const placedProps = editorStats.reduce((sum, stat) => {
 			return sum + stat.placedProps;
 		}, 0);
-		const placedAll = placedTrackPieces + placedCheckpoints + placedProps; 
+		const placedAll = placedTrackPieces + placedCheckpoints + placedProps;
 
 		const nrTests = editorStats.reduce((sum, stat) => {
 			return sum + stat.nrTests;
@@ -92,7 +104,17 @@ export class UserStatService {
 
 		const globalScores = await this.globalScoreService.getAllGlobalScores();
 
-		const globalScore = globalScores.find((score) => score.user.toHexString() === userId.toHexString());
+		// console.log("globalScores", globalScores);
+
+		// const globalScore = globalScores.find((score) => score.user.toHexString() === userId.toHexString());
+		const globalScoreIndex = globalScores.findIndex((score) => score.user._id.toHexString() === userId.toHexString());
+
+		const globalScore = globalScoreIndex !== -1 ? globalScores[globalScoreIndex] : {
+			scoreTime: -1,
+			scoreLaps: -1,
+			score: -1,
+			globalRank: -1,
+		} as IGlobalScore;
 
 
 		return {

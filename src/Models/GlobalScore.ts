@@ -7,7 +7,7 @@ export interface IGlobalScore extends Document {
 	user: Types.ObjectId;
 	scoreLaps: number;
 	scoreTime: number;
-	score?: number;
+	score: number;
 	globalRank?: number;
 }
 
@@ -22,9 +22,10 @@ export const GlobalScoreSchema = new Schema({
 			},
 		}
 	},
-	scoreLaps: { type: Number, required: true, default: 0 },
-	scoreTime: { type: Number, required: true, default: 0 },
-	score: { type: Number, required: true, default: 0},
+	scoreLaps: { type: Number, required: true, default: -1 },
+	scoreTime: { type: Number, required: true, default: -1 },
+	score: { type: Number, required: true, default: -1},
+	globalRank: { type: Number, required: true, default: -1},
 });
 
 export const GlobalScore = mongoose.model<IGlobalScore>("GlobalScore", GlobalScoreSchema);
