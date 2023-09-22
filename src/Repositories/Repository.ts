@@ -30,6 +30,10 @@ export class Repository<IDataType extends Document> implements IRepository<IData
 		return this.model.findByIdAndUpdate(entityId, query, { new: true, runValidators: true }).exec();
 	}
 
+	updateWithFindQuery(query: any, entityUpdates: Partial<IDataType>): Promise<IDataType | null> {
+		return this.model.findOneAndUpdate(query, entityUpdates, { new: true, runValidators: true }).exec();
+	}
+
 	remove(entityId: Types.ObjectId): Promise<IDataType | null> {
 		return this.model.findByIdAndDelete(entityId).exec();
 	}

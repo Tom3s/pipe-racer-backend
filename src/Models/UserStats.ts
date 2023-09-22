@@ -1,5 +1,6 @@
 import { Types } from "mongoose";
 import { ITrack } from "./Track";
+import { IGlobalScore } from "./GlobalScore";
 
 export interface IUserStats {
 		// hours played
@@ -23,5 +24,6 @@ export interface IUserStats {
 	placedProps: number;
 	placedAll: number;
 	nrTests: number;
+	globalScore?: IGlobalScore;
 	
 }

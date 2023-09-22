@@ -27,6 +27,9 @@ import { UserStatService } from './Services/UserStatService';
 import { migrateCompletedRunsToStats } from './Global/MigrateStats';
 import { EditorStatRepository } from './Repositories/EditorStatRepository';
 import { EditorStatService } from './Services/EditorStatService';
+import { setupGlobalRankRoutes } from './Routing/SetupGlobalRankRoutes';
+import { GlobalScoreService } from './Services/GlobalScoreService';
+import { GlobalScoreRepository } from './Repositories/GlobalScoreRepository';
 
 dotenv.config();
 
@@ -54,6 +57,7 @@ const completedRunRepository = new CompletedRunRepository();
 const ratingRepository = new RatingRepository();
 const trackStatRepository = new TrackStatRepository();
 const editorStatRepository = new EditorStatRepository();
+const globalScoreRepository = new GlobalScoreRepository();
 
 const imageFileService = new ImageFileService();
 const trackFileService = new TrackFileService();
@@ -64,7 +68,8 @@ const ratingService = new RatingService(ratingRepository, trackService);
 const leaderboardService = new LeaderboardService(completedRunRepository);
 const trackStatService = new TrackStatService(trackStatRepository);
 const editorStatService = new EditorStatService(editorStatRepository);
-const userStatService = new UserStatService(trackStatService, editorStatService, trackService, ratingService);
+const globalScoreService = new GlobalScoreService(globalScoreRepository, userService, trackService, leaderboardService);
+const userStatService = new UserStatService(trackStatService, editorStatService, trackService, ratingService, globalScoreService);
 
 setupAuthenticationRoutes(app, authService);
 setupUserRoutes(app, userService, imageFileService);
@@ -72,6 +77,7 @@ setupTrackRoutes(app, trackService, trackFileService);
 setupLeaderboardRoutes(app, leaderboardService);
 setupRatingRoutes(app, ratingService);
 setupStatRoutes(app, trackStatService, editorStatService, userStatService);
+setupGlobalRankRoutes(app, globalScoreService);
 
 const privateKeyPath = path.join(__dirname, '../key.pem');
 const certificatePath = path.join(__dirname, '../cert.pem');
