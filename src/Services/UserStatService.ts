@@ -6,6 +6,7 @@ import { RatingService } from "./RatingService";
 import { ITrackStat } from "../Models/TrackStat";
 import { createObjectId } from "../Global/CreateObjectId";
 import { EditorStatService } from "./EditorStatService";
+import { GlobalScoreService } from "./GlobalScoreService";
 
 export class UserStatService {
 	constructor(
@@ -13,6 +14,7 @@ export class UserStatService {
 		private editorStatService: EditorStatService,
 		private trackService: TrackService,
 		private ratingService: RatingService,
+		private globalScoreService: GlobalScoreService,
 	) { }
 
 	// CREATE - none
@@ -88,6 +90,10 @@ export class UserStatService {
 			return sum + stat.nrTests;
 		}, 0);
 
+		const globalScores = await this.globalScoreService.getAllGlobalScores();
+
+		const globalScore = globalScores.find((score) => score.user.toHexString() === userId.toHexString());
+
 
 		return {
 			user: userId,
@@ -105,6 +111,7 @@ export class UserStatService {
 			placedProps: placedProps,
 			placedAll: placedAll,
 			nrTests: nrTests,
+			globalScore: globalScore,
 		} as IUserStats;
 
 	}
