@@ -72,7 +72,7 @@ export class GlobalScoreService {
 		});
 	
 		for (const score of sortedScores) {
-			score.score = (score.scoreTime + score.scoreLaps) / 2;
+			score.score = Math.floor((score.scoreTime + score.scoreLaps) / 2);
 			score.globalRank = userScores.indexOf(score) + 1;
 	
 			// Check if the user score exists and update or save accordingly
