@@ -9,6 +9,7 @@ export const validateTrackFormat = (track: any) => {
 			break;
 		case 2:
 			validateTrackFormat2(track);
+			break;
 		default:
 			throw new InvalidTrackFormatError("Invalid track format id");
 	}
