@@ -4,8 +4,11 @@ export const validateTrackFormat = (track: any) => {
 	// console.log(track?.format);
 	switch (track?.format) {
 		case 1:
-			validateTrackFormat1(track);
+			// validateTrackFormat1(track);
+			throw new InvalidTrackFormatError("Track format 1 is not supported");
 			break;
+		case 2:
+			validateTrackFormat2(track);
 		default:
 			throw new InvalidTrackFormatError("Invalid track format id");
 	}
@@ -49,6 +52,47 @@ export const validateTrackFormat1 = (track: any) => {
 
 	for (const prop of track.props) {
 		verifyProp(prop);
+	}
+};
+
+export const validateTrackFormat2 = (track: any) => {
+	const requiredFields = [
+		// "format",
+		"trackName",
+		"lapCount",
+		"trackPieces",
+		"start",
+		"checkPoints",
+		// "props"
+	];
+
+	if (!track.author){
+		track.author = "unknown";
+	}
+
+	for (const field of requiredFields) {
+		if (!track.hasOwnProperty(field)) {
+			throw new InvalidTrackFormatError("No metadata");
+		}
+	}
+
+	for (const trackPiece of track.trackPieces) {
+		verifyTrackPiece(trackPiece);
+	}
+
+	if (track.checkPoints.length <= 0) {
+		throw new InvalidTrackFormatError("Track must have at least one checkpoint");
+	}
+	for (const checkPoint of track.checkPoints) {
+		verifyCheckPoint(checkPoint);
+	}
+
+	if (!track.props){
+		return;
+	}
+
+	for (const prop of track.props) {
+		verifyProp2(prop);
 	}
 };
 
@@ -114,3 +158,20 @@ const verifyProp = (prop: any) => {
 		}
 	}
 }
+
+const verifyProp2 = (prop: any) => {
+	const requiredFields = [
+		"positionX",
+		"positionY",
+		"positionZ",
+		"rotation",
+		"textureName",
+	];
+
+	for (const field of requiredFields) {
+		if (!prop.hasOwnProperty(field)) {
+			throw new InvalidTrackFormatError("Invalid prop format");
+		}
+	}
+}
+
