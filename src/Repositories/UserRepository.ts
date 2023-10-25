@@ -15,8 +15,8 @@ export class UserRepository extends Repository<IUser> {
 		return this.model.find(query).select("-email -passwordHash -admin").exec();
 	}
 
-	getAll(): Promise<IUser[]> {
-		return this.model.find({}).select("-email -passwordHash -admin").exec();
+	getPage(pageSize: number = 0, pageNumber: number = 0): Promise<IUser[]> {
+		return this.model.find({}).skip(pageSize * pageNumber).limit(pageSize).select("-email -passwordHash -admin").exec();
 	}
 
 	aggregate(pipeline: any[]): Promise<IUser[]> {

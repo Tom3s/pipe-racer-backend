@@ -20,7 +20,7 @@ export class TrackStatService {
 	// READ
 
 	getAllTrackStats(): Promise<ITrackStat[]> {
-		return this.trackStatRepository.getAll();
+		return this.trackStatRepository.getPage();
 	}
 
 	getStatsForUser(userId: Types.ObjectId): Promise<ITrackStat[]> {

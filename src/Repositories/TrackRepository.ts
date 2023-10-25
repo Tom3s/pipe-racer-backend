@@ -14,8 +14,8 @@ export class TrackRepository extends Repository<ITrack> {
 		});
 	}
 
-	getAll(): Promise<ITrack[]> {
-		return this.model.find({}).populate({
+	getPage(pageSize: number = 0, pageNumber: number = 0): Promise<ITrack[]> {
+		return this.model.find({}).skip(pageSize * pageNumber).limit(pageSize).populate({
 			path: "author",
 			select: "username _id"
 		});

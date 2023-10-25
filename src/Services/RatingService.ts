@@ -40,7 +40,7 @@ export class RatingService {
 	}
 
 	getAllRatings() {
-		return this.ratingRepo.getAll();
+		return this.ratingRepo.getPage();
 	}
 
 	getRatingsByUser(userId: Types.ObjectId) {

@@ -50,7 +50,18 @@ export class TrackService {
 	// READ
 
 	async getAllTracks(): Promise<ITrack[]> {
-		return this.trackRepository.getAll().then((tracks: ITrack[]) => {
+		return this.trackRepository.getPage().then((tracks: ITrack[]) => {
+			return tracks.map((track) => {
+				return {
+					...track.toObject(),
+					uploadDate: track._id.getTimestamp()
+				}
+			}) as ITrack[];
+		});
+	}
+
+	async getTrackPages(pageSize: number, pageNumber: number): Promise<ITrack[]> {
+		return this.trackRepository.getPage(pageSize, pageNumber).then((tracks: ITrack[]) => {
 			return tracks.map((track) => {
 				return {
 					...track.toObject(),

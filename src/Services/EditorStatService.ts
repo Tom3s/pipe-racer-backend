@@ -24,7 +24,7 @@ export class EditorStatService {
 	// READ
 
 	getAllEditorStats(): Promise<IEditorStat[]> {
-		return this.editorStatRepository.getAll();
+		return this.editorStatRepository.getPage();
 	}
 
 	getStatsForUser(userId: Types.ObjectId): Promise<IEditorStat[]> {

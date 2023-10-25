@@ -16,7 +16,10 @@ export const setupUserRoutes = (app: Express, userService: UserService, imageFil
 
 	// READ
 	app.get(`${basePath}`, (request: Request, response: Response) => {
-		userService.getAllUsers()
+		const pageSize = parseInt(request.query.pageSize as string);
+		const pageNumber = parseInt(request.query.pageNumber as string);
+
+		userService.getUserPage(pageSize, pageNumber)
 			.then((users) => {
 				sendOKResponse(response, users);
 			})
