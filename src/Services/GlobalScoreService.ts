@@ -89,6 +89,8 @@ export class GlobalScoreService {
 		await this.calculateGlobalRanks();
 		// sort by .score
 		const pipeline = [
+			// omit scores with 0 points
+			{ $match: { score: { $gt: 0 } } },
 			{ $sort: { globalRank: 1 } },
 			{ $skip: pageSize * pageNumber },
 			{ $limit: pageSize },
