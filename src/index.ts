@@ -30,6 +30,9 @@ import { EditorStatService } from './Services/EditorStatService';
 import { setupGlobalRankRoutes } from './Routing/SetupGlobalRankRoutes';
 import { GlobalScoreService } from './Services/GlobalScoreService';
 import { GlobalScoreRepository } from './Repositories/GlobalScoreRepository';
+import { setupCommentRoutes } from './Routing/SetupCommentRoutes';
+import { CommentService } from './Services/CommentService';
+import { CommentRepository } from './Repositories/CommentRepository';
 
 dotenv.config();
 
@@ -58,6 +61,7 @@ const ratingRepository = new RatingRepository();
 const trackStatRepository = new TrackStatRepository();
 const editorStatRepository = new EditorStatRepository();
 const globalScoreRepository = new GlobalScoreRepository();
+const commentRepository = new CommentRepository();
 
 const imageFileService = new ImageFileService();
 const trackFileService = new TrackFileService();
@@ -70,6 +74,7 @@ const trackStatService = new TrackStatService(trackStatRepository);
 const editorStatService = new EditorStatService(editorStatRepository);
 const globalScoreService = new GlobalScoreService(globalScoreRepository, userService, trackService, leaderboardService);
 const userStatService = new UserStatService(trackStatService, editorStatService, trackService, ratingService, globalScoreService);
+const commentService = new CommentService(commentRepository)
 
 setupAuthenticationRoutes(app, authService);
 setupUserRoutes(app, userService, imageFileService);
@@ -78,6 +83,7 @@ setupLeaderboardRoutes(app, leaderboardService);
 setupRatingRoutes(app, ratingService);
 setupStatRoutes(app, trackStatService, editorStatService, userStatService);
 setupGlobalRankRoutes(app, globalScoreService);
+setupCommentRoutes(app, commentService);
 
 const privateKeyPath = path.join(__dirname, '../key.pem');
 const certificatePath = path.join(__dirname, '../cert.pem');
