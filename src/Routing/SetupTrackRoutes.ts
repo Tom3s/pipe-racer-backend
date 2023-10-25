@@ -29,7 +29,10 @@ export const setupTrackRoutes = (app: Express, trackService: TrackService, track
 	// READ
 
 	app.get(`${basePath}`, (request: Request, response: Response) => {
-		trackService.getAllTracks()
+		const pageSize = parseInt(request.query.pageSize as string);
+		const pageNumber = parseInt(request.query.pageNumber as string);
+
+		trackService.getTrackPages(pageSize, pageNumber)
 			.then((tracks) => {
 				sendOKResponse(response, tracks);
 			})

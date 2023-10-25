@@ -18,8 +18,8 @@ export class Repository<IDataType extends Document> implements IRepository<IData
 		return this.model.find(query);
 	}
 
-	getAll(): Promise<IDataType[]> {
-		return this.model.find({});
+	getPage(pageSize: number = 0, pageNumber: number = 0): Promise<IDataType[]> {
+		return this.model.find({}).skip(pageSize * pageNumber).limit(pageSize);
 	}
 
 	update(entityId: Types.ObjectId, entityUpdates: Partial<IDataType>): Promise<IDataType | null> {

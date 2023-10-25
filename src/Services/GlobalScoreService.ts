@@ -27,7 +27,7 @@ export class GlobalScoreService {
 			GlobalScoreService.lastUpdate = new Date();
 		}
 	
-		const players = await this.userService.getAllUsers() as IUser[];
+		const players = await this.userService.getUserPage() as IUser[];
 		// console.log("Calculating global ranks for " + players.length + " players");
 		const userScores = players.map((player) => {
 			return {
@@ -85,11 +85,13 @@ export class GlobalScoreService {
 	}
 	
 
-	async getAllGlobalScores(): Promise<IGlobalScore[]> {
+	async getAllGlobalScores(pageSize: number = 0, pageNumber: number = 0): Promise<IGlobalScore[]> {
 		await this.calculateGlobalRanks();
 		// sort by .score
 		const pipeline = [
 			{ $sort: { globalRank: 1 } },
+			{ $skip: pageSize * pageNumber },
+			{ $limit: pageSize },
 			{ $lookup: { from: "users", localField: "user", foreignField: "_id", as: "user" } },
 			{ $unwind: "$user" },
 			{ $project: { "user.passwordHash": 0, "user.email": 0, "user.sessionToken": 0, "user.admin": 0 } },

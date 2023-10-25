@@ -4,7 +4,7 @@ export interface IRepository<DataType extends Document> {
 	save(newData: DataType): Promise<DataType>;
 	get(dataId: Types.ObjectId): Promise<DataType | null>;
 	getQuery(query: any): Promise<DataType[]>
-	getAll(): Promise<DataType[]>;
+	getPage(pageSize: number, pageNumber: number): Promise<DataType[]>;
 	update(dataId: Types.ObjectId, dataUpdates: DataType): Promise<DataType | null>;
 	updateQuery(dataId: Types.ObjectId, query: any): Promise<DataType | null>;
 	updateWithFindQuery(query: any, entityUpdates: Partial<DataType>): Promise<DataType | null>

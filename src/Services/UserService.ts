@@ -23,8 +23,8 @@ export class UserService {
 		return this.userRepository.getQuery({ username: username });
 	}
 
-	async getAllUsers(): Promise<IUser[]> {
-		return this.userRepository.getAll();
+	async getUserPage(pageSize: number = 0, pageNumber: number = 0): Promise<IUser[]> {
+		return this.userRepository.getPage(pageSize, pageNumber);
 	}
 
 	async updateUser(userId: Types.ObjectId, userUpdates: any): Promise<IUser | null> {
