@@ -14,10 +14,16 @@ export class TrackRepository extends Repository<ITrack> {
 		});
 	}
 
-	getPage(pageSize: number = 0, pageNumber: number = 0): Promise<ITrack[]> {
-		return this.model.find({}).skip(pageSize * pageNumber).limit(pageSize).populate({
-			path: "author",
-			select: "username _id"
+	getPage(pageSize: number = 0, pageNumber: number = 0, sortByField: string = "_id", sortDirection: number = 1): Promise<ITrack[]> {
+		const sortObject: any = {};
+		sortObject[sortByField] = sortDirection;
+		return this.model.find({})
+			.sort(sortObject)
+			.skip(pageSize * pageNumber)
+			.limit(pageSize)
+			.populate({
+				path: "author",
+				select: "username _id"
 		});
 	}
 

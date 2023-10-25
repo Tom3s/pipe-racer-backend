@@ -32,7 +32,13 @@ export const setupTrackRoutes = (app: Express, trackService: TrackService, track
 		const pageSize = parseInt(request.query.pageSize as string);
 		const pageNumber = parseInt(request.query.pageNumber as string);
 
-		trackService.getTrackPages(pageSize, pageNumber)
+		const sortByField = request.query.sortByField as string;
+		const ascending = Boolean(request.query.ascending as string);
+		const descending = Boolean(request.query.descending as string);
+
+		const sortDirection = ascending ? 1 : descending ? -1 : 1;
+
+		trackService.getTrackPages(pageSize, pageNumber, sortByField, sortDirection)
 			.then((tracks) => {
 				sendOKResponse(response, tracks);
 			})

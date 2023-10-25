@@ -60,8 +60,8 @@ export class TrackService {
 		});
 	}
 
-	async getTrackPages(pageSize: number, pageNumber: number): Promise<ITrack[]> {
-		return this.trackRepository.getPage(pageSize, pageNumber).then((tracks: ITrack[]) => {
+	async getTrackPages(pageSize: number = 0, pageNumber: number = 0, sortByField: string = "_id", sortDirection: number = 1): Promise<ITrack[]> {
+		return this.trackRepository.getPage(pageSize, pageNumber, sortByField, sortDirection).then((tracks: ITrack[]) => {
 			return tracks.map((track) => {
 				return {
 					...track.toObject(),
