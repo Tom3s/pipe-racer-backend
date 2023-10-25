@@ -92,12 +92,17 @@ export class GlobalScoreService {
 			// omit scores with 0 points
 			{ $match: { score: { $gt: 0 } } },
 			{ $sort: { globalRank: 1 } },
-			{ $skip: pageSize * pageNumber },
-			{ $limit: pageSize },
-			{ $lookup: { from: "users", localField: "user", foreignField: "_id", as: "user" } },
-			{ $unwind: "$user" },
-			{ $project: { "user.passwordHash": 0, "user.email": 0, "user.sessionToken": 0, "user.admin": 0 } },
-		];
+			{ $skip: pageSize * pageNumber }
+		]
+		if (pageSize > 0) {
+			pipeline.push({ $limit: pageSize } as any);
+		}
+		pipeline.push(
+			// { $limit: pageSize },
+			{ $lookup: { from: "users", localField: "user", foreignField: "_id", as: "user" } } as any,
+			{ $unwind: "$user" } as any,
+			{ $project: { "user.passwordHash": 0, "user.email": 0, "user.sessionToken": 0, "user.admin": 0 } } as any,
+		);
 		return this.globalScoreRepository.aggregate(pipeline);
 	}
 
