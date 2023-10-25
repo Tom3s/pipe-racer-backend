@@ -25,6 +25,10 @@ export class CommentRepository extends Repository<IComment> {
 	}
 
 	removeByUser(commentId: Types.ObjectId, userId: Types.ObjectId): Promise<IComment | null> {
-		return this.model.findOneAndDelete({ _id: commentId, user: userId }).exec();
+		// set all comments with parentComment == commentId to have parentComment = null
+		return this.model.updateMany({ parentComment: commentId }, { parentComment: null }).exec()
+			.then(() => {
+				return this.model.findOneAndDelete({ _id: commentId, user: userId }).exec()
+			})		
 	}
 }
