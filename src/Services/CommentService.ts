@@ -35,6 +35,7 @@ export class CommentService {
 	// DELETE
 
 	async deleteComment(commentId: Types.ObjectId, userId: Types.ObjectId): Promise<IComment | null> {
+		this.commentRatingRepository.removeAllByComment(commentId);
 		return this.commentRepository.removeByUser(commentId, userId);
 	}
 
