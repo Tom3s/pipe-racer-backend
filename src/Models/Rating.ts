@@ -1,6 +1,5 @@
 import mongoose, { Document, Types } from "mongoose";
 import { User } from "./User";
-import { translations } from "../Translations";
 import { Track } from "./Track";
 
 const { Schema } = mongoose;

@@ -1,15 +1,18 @@
 import { Types } from "mongoose";
 import { CommentRepository } from "../Repositories/CommentRepository";
+import { CommentRatingRepository } from "../Repositories/CommentRatingRepository";
 import { IComment } from "../Models/Comment";
+import { ICommentRating } from "../Models/CommentRating";
 
 export class CommentService {
 	constructor(
-		private commentRepository: CommentRepository
+		private commentRepository: CommentRepository,
+		private commentRatingRepository: CommentRatingRepository
 	) { }
 
 	// CREATE
 
-	async addComment(userId: Types.ObjectId,  comment: IComment): Promise<IComment> {
+	async addComment(userId: Types.ObjectId, comment: IComment): Promise<IComment> {
 		const newComment = {
 			...comment,
 			user: userId
@@ -33,5 +36,20 @@ export class CommentService {
 
 	async deleteComment(commentId: Types.ObjectId, userId: Types.ObjectId): Promise<IComment | null> {
 		return this.commentRepository.removeByUser(commentId, userId);
+	}
+
+	// MISC 
+
+	async calculateCommentRating(commentId: Types.ObjectId): Promise<ICommentRating> {
+		return this.commentRatingRepository.getQuery({ commentId: commentId }).then((ratings) => {
+			let totalRating = 0;
+			ratings.forEach((rating) => {
+				totalRating += rating.rating;
+			});
+			this.commentRepository.updateQuery(commentId, { rating: totalRating });
+			return {
+				rating: totalRating,
+			} as ICommentRating;
+		});
 	}
 }
