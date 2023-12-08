@@ -1,3 +1,4 @@
+import { AccountNotRegisteredError } from "../Errors/AccountNotRegisteredError";
 import { BadREquestError } from "../Errors/BadRequestError";
 import { EmailAlreadyConfirmedError } from "../Errors/EmailAlreadyConfirmedError";
 import { EmailTakenError } from "../Errors/EmailTakeError";
@@ -48,6 +49,9 @@ export class AuthenticationService {
 		.then((foundUser) => {
 			if (!foundUser) {
 				throw new InvalidResetCredentialsError();
+			}
+			if (foundUser.guest) {
+				throw new AccountNotRegisteredError();
 			}
 			if (foundUser.email !== email) {
 				throw new InvalidResetCredentialsError();
