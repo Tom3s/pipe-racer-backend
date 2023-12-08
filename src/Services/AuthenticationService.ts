@@ -1,11 +1,12 @@
 import { BadREquestError } from "../Errors/BadRequestError";
 import { EmailAlreadyConfirmedError } from "../Errors/EmailAlreadyConfirmedError";
 import { EmailTakenError } from "../Errors/EmailTakeError";
-import { InvalidCredentialsError } from "../Errors/InvalidCredentialsError";
+import { InvalidTokenError } from "../Errors/ExpiredTokenError";
+import { InvalidCredentialsError, InvalidResetCredentialsError } from "../Errors/InvalidCredentialsError";
 import { InvalidEmailError } from "../Errors/InvalidEmailError";
 import { PassworTooWeakError } from "../Errors/PasswordTooWeakError";
 import { UsernameTakenError } from "../Errors/UsernameTakenError";
-import { generatePasswordHash, verifyEmailValidity, verifyPasswordStrength, verifyTokenExpirationDate } from "../Global/CredentialHandler";
+import { generatePasswordHash, verifyEmailValidity, verifyPasswordStrength, verifyResetTokenExpirationDate, verifyTokenExpirationDate } from "../Global/CredentialHandler";
 import { decodeTokenData, generateJWToken } from "../Global/JWTHandler";
 import { ClientSessionData, SessionData } from "../Models/SessionData";
 import { IUser, User } from "../Models/User";
@@ -37,8 +38,44 @@ export class AuthenticationService {
 
 		// const confirmUrl = process.env.HOST + ":" + process.env.PORT + "/api/auth/confirm?token=" + this.generateRegistrationToken(username, password, email);
 		const confirmUrl = process.env.WEBSITE + "/confirm?token=" + this.generateRegistrationToken(username, password, email.toLowerCase());
-		console.log(confirmUrl);
+		// console.log(confirmUrl);
 		return confirmUrl;
+	}
+
+	async getResetPasswordToken(username: string, email: string): Promise<string> {
+
+		const user = await this.userRepository.existsByUsername(username)
+		.then((foundUser) => {
+			if (!foundUser) {
+				throw new InvalidResetCredentialsError();
+			}
+			if (foundUser.email !== email) {
+				throw new InvalidResetCredentialsError();
+			}
+			return foundUser;
+		})
+
+		const resetUrl = process.env.WEBSITE + "/resetPassword?token=" + this.generateResetToken(user, email.toLowerCase());
+		// console.log(resetUrl);
+		return resetUrl;
+	} 
+
+	async resetPassword(token: string, newPassword: string) {
+		const decodedToken = decodeTokenData(token);
+		verifyResetTokenExpirationDate(decodedToken.date);
+		if (!decodedToken.isResetToken) {
+			throw new InvalidTokenError();
+		}
+		verifyPasswordStrength(newPassword);
+		return this.userRepository.existsByUsername(decodedToken.username)
+		.then((foundUser) => {
+			if (foundUser) {
+				return this.userRepository.update(foundUser._id, {
+					passwordHash: generatePasswordHash(newPassword)
+				});
+			}
+			throw new InvalidTokenError();
+		})
 	}
 
 	confirmRegistration(token: string) {
@@ -90,8 +127,6 @@ export class AuthenticationService {
 		})
 	}
 
-
-
 	private generateRegistrationToken(username: string, password: string, email: string): string {
 		return generateJWToken({
 			username: username,
@@ -107,6 +142,16 @@ export class AuthenticationService {
 			userId: foundUser._id.toHexString(),
 			admin: foundUser.admin,
 			loginDate: loginDate
+		});
+	}
+
+	private generateResetToken(foundUser: IUser, email: string): string {
+		return generateJWToken({
+			username: foundUser.username,
+			email: email,
+			userId: foundUser._id.toHexString(),
+			isResetToken: true,
+			date: new Date(),
 		});
 	}
 

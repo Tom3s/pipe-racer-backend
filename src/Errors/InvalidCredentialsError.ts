@@ -7,3 +7,10 @@ export class InvalidCredentialsError extends ResponseError {
 		super("Invalid username or password.");
 	}
 }
+
+export class InvalidResetCredentialsError extends ResponseError {
+	statusCode: number = StatusCodes.UNAUTHORIZED;
+	constructor() {
+		super("Username does not match email.");
+	}
+}
