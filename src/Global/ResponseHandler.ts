@@ -9,5 +9,5 @@ export const sendOKResponse = (response: Response, data: any) => {
 export const sendErrorResponse = (response: Response, error: any) => {
 	if (!error.statusCode) 
 		error.statusCode = StatusCodes.INTERNAL_SERVER_ERROR;
-	response.status(error.statusCode).send(error.message);
+	response.status(error.statusCode).send(error.message == 'JWT malformed' ? 'You must log in to access this feature.' : error.message);
 };
