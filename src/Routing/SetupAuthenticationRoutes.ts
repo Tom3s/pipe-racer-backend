@@ -113,7 +113,7 @@ export const setupAuthenticationRoutes = (app: Express, authService: Authenticat
 			});
 	});
 
-	app.get(`${basePath}/resetPassword`, async (request: Request, response: Response) => {
+	app.post(`${basePath}/resetPassword`, async (request: Request, response: Response) => {
 		const username = request.body.username as string;
 		const email = request.body.email as string;
 		authService.getResetPasswordToken(username, email)
@@ -126,7 +126,7 @@ export const setupAuthenticationRoutes = (app: Express, authService: Authenticat
 			});
 	});
 
-	app.post(`${basePath}/resetPassword`, async (request: Request, response: Response) => {
+	app.put(`${basePath}/resetPassword`, async (request: Request, response: Response) => {
 		const token = request.query.token as string;
 		const newPassword = request.body.password;
 		authService.resetPassword(token, newPassword)
