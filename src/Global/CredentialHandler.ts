@@ -1,4 +1,5 @@
 import { ExpiredRegistrationTokenError } from "../Errors/ExpiredRegistrationTokenError";
+import { ExpiredTokenError } from "../Errors/ExpiredTokenError";
 import { InvalidEmailError } from "../Errors/InvalidEmailError";
 import { PassworTooWeakError } from "../Errors/PasswordTooWeakError";
 
@@ -31,3 +32,13 @@ export const verifyTokenExpirationDate = (date: Date) => {
 		throw new ExpiredRegistrationTokenError();
 	}
 };
+
+export const verifyResetTokenExpirationDate = (date: Date) => {
+	date = new Date(date);
+	const now = new Date();
+	const diff = now.getTime() - date.getTime();
+	const diffInMinutes = diff / (1000 * 60);
+	if (diffInMinutes > 10) {
+		throw new ExpiredTokenError();
+	}
+}
