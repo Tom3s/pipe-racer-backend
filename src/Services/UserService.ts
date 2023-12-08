@@ -3,6 +3,7 @@ import { UserRepository } from "../Repositories/UserRepository";
 import { ImageFileService } from "./ImageFileService";
 import { generatePasswordHash, verifyEmailValidity, verifyPasswordStrength } from "../Global/CredentialHandler";
 import { IUser } from "../Models/User";
+import { UsernameTakenError } from "../Errors/UsernameTakenError";
 
 export class UserService {
 	private userRepository: UserRepository;
@@ -34,6 +35,14 @@ export class UserService {
 		}
 		if (userUpdates.email !== undefined) {
 			verifyEmailValidity(userUpdates.email);
+		}
+
+		const newUsername = userUpdates.username;
+		if (newUsername !== undefined) {
+			const foundUser = await this.userRepository.existsByUsername(newUsername);
+			if (foundUser !== null && foundUser._id.toHexString() !== userId.toHexString()) {
+				throw new UsernameTakenError();
+			}
 		}
 
 		return this.userRepository.update(userId, userUpdates);
