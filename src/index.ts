@@ -35,6 +35,11 @@ import { CommentService } from './Services/CommentService';
 import { CommentRepository } from './Repositories/CommentRepository';
 import { CommentRatingRepository } from './Repositories/CommentRatingRepository';
 import { CommentRatingService } from './Services/CommentRatingService';
+import { Replay } from './Models/Replay';
+import { ReplayRepository } from './Repositories/ReplayRepository';
+import { ReplayFileService } from './Services/ReplayFileService';
+import { ReplayService } from './Services/ReplayService';
+import { setupReplayRoutes } from './Routing/SetupReplayRoutes';
 
 dotenv.config();
 
@@ -65,6 +70,7 @@ const editorStatRepository = new EditorStatRepository();
 const globalScoreRepository = new GlobalScoreRepository();
 const commentRepository = new CommentRepository();
 const commentRatingRepository = new CommentRatingRepository();
+const replayRepository = new ReplayRepository();
 
 const imageFileService = new ImageFileService();
 const trackFileService = new TrackFileService();
@@ -79,6 +85,8 @@ const globalScoreService = new GlobalScoreService(globalScoreRepository, userSer
 const userStatService = new UserStatService(trackStatService, editorStatService, trackService, ratingService, globalScoreService);
 const commentService = new CommentService(commentRepository, commentRatingRepository)
 const commentRatingService = new CommentRatingService(commentRatingRepository, commentService);
+const replayFileService = new ReplayFileService();
+const replayService = new ReplayService(replayRepository, replayFileService, leaderboardService);
 
 setupAuthenticationRoutes(app, authService);
 setupUserRoutes(app, userService, imageFileService);
@@ -88,6 +96,7 @@ setupRatingRoutes(app, ratingService);
 setupStatRoutes(app, trackStatService, editorStatService, userStatService);
 setupGlobalRankRoutes(app, globalScoreService);
 setupCommentRoutes(app, commentService, commentRatingService);
+setupReplayRoutes(app, replayService);
 
 const privateKeyPath = path.join(__dirname, '../key.pem');
 const certificatePath = path.join(__dirname, '../cert.pem');
@@ -110,4 +119,3 @@ httpsServer.listen(3443, () => {
 app.listen(3080, () => {
 	console.log(`⚡️[server]: Server is running at http://localhost:3080`);
 });
-

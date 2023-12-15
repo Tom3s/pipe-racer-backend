@@ -36,7 +36,7 @@ export class TrackService {
 						return addedTrack;
 					})
 					.catch((error) => {
-						console.log("deleting entry from database", addedTrack._id);
+						console.log("deleting track entry from database", addedTrack._id);
 						this.trackRepository.remove(addedTrack._id);
 						throw error;
 					})
