@@ -33,6 +33,14 @@ export const setupReplayRoutes = (app: Express, replayService: ReplayService) =>
 
 	// READ
 	app.get(`${basePath}/:id`, async (request: Request, response: Response) => {
+		const sessionToken = request.header('Session-Token') as string;
+		try {
+			const sessionData: SessionData = AuthenticationService.verifySessionToken(sessionToken);
+		} catch (error: any) {
+			sendErrorResponse(response, error);
+			return;
+		}
+
 		const replayId = createObjectId(request.params.id as string);
 		replayService.getReplayFile(replayId)
 			.then((replayFile) => {

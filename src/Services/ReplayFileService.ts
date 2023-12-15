@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 import { UploadingReplayError } from "../Errors/UploadingReplayError";
+import { InvalidReplayError } from "../Errors/InvalidReplayError";
 
 export class ReplayFileService {
 	private replayFileDirectory = "../../public/replays";
@@ -17,6 +18,9 @@ export class ReplayFileService {
 
 	public getReplayFile(replayId: string): string {
 		const fileName = path.join(__dirname, `${this.replayFileDirectory}/${replayId}.replay`);
+		if (!fs.existsSync(fileName)) {
+			throw new InvalidReplayError(replayId);
+		}
 		return fileName;
 	}
 }
