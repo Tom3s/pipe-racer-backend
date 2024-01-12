@@ -4,6 +4,8 @@ import { ReplayFileService } from "./ReplayFileService";
 import { IReplay } from "../Models/Replay";
 import { LeaderboardService } from "./LeaderboardService";
 
+const CURRENT_FORMAT_VERSION = 1;
+
 export class ReplayService {
 	constructor(
 		private replayRepository: ReplayRepository,
@@ -14,18 +16,26 @@ export class ReplayService {
 	// CREATE
 
 	async uploadReplay(replay: Buffer, user: Types.ObjectId): Promise<IReplay> {
-		const replayAsString = replay.toString('utf8');
-		const lines = replayAsString.split("\n");
-		const trackId = lines[0];
-		const nrCars = parseInt(lines[1]);
-		const times = [];
-		for (let i = 2; i < 2 + nrCars; i++) {
-			times.push(lines[i]);
+		// replay:
+		// format (8bit int)
+		// [trackId, nrlaps, nrcheckpoint] (line)
+		// nrCars (16bit int)
+		// time (32bit int)
+
+		const formatVersion = replay.readInt8(0);
+		if (formatVersion !== CURRENT_FORMAT_VERSION) {
+			throw new Error(`Invalid replay format version: ${formatVersion} (newest: ${CURRENT_FORMAT_VERSION})`);
 		}
+		const trackMetadata = replay.toString("utf-8", 1, replay.indexOf("\n"));
+		const trackId = trackMetadata.split(",")[0];
+		const time = replay.readUInt32LE(replay.indexOf("\n") + 3);
+
+		console.log("Time: ", time);
+
 		const newReplay = {
 			user: user,
 			track: new Types.ObjectId(trackId),
-			time: Math.min(...times.map((time) => parseInt(time))),
+			time: time,
 		} as IReplay;
 
 		return this.replayRepository.save(newReplay)
