@@ -8,8 +8,13 @@ export const validateTrackFormat = (track: any) => {
 			throw new InvalidTrackFormatError("Track format 1 is not supported");
 			break;
 		case 2:
-			validateTrackFormat2(track);
+			// validateTrackFormat2(track);
+			throw new InvalidTrackFormatError("Track format 2 is not supported");
 			break;
+		case 3:
+			validateTrackFormat3(track);
+			break;
+
 		default:
 			throw new InvalidTrackFormatError("Invalid track format id");
 	}
@@ -55,6 +60,32 @@ export const validateTrackFormat1 = (track: any) => {
 		verifyProp(prop);
 	}
 };
+
+export const validateTrackFormat3 = (track: any) => {
+	const requiredFields = [
+		// "validated",
+		"bestLapTime",
+		"bestLapReplay",
+		"bestTotalTime",
+		"bestTotalReplay",
+	]
+
+	if (track["validated"] === undefined) {
+		throw new InvalidTrackFormatError("Unvalidated track");
+	} else {
+		if (!track["validated"]) {
+			throw new InvalidTrackFormatError("Unvalidated track");
+		}
+	}
+
+	for (const field of requiredFields) {
+		if (!track.hasOwnProperty(field)) {
+			throw new InvalidTrackFormatError("No validation data");
+		}
+	}
+
+	validateTrackFormat2(track);
+}
 
 export const validateTrackFormat2 = (track: any) => {
 	const requiredFields = [

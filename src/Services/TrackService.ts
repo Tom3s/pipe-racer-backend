@@ -27,6 +27,10 @@ export class TrackService {
 		const newTrack = {
 			name: track.trackName as string,
 			author: author,
+			bestLapTime: track.bestLapTime as number,
+			bestTotalTime: track.bestTotalTime as number,
+			bestTotalReplay: new Types.ObjectId(track.bestTotalReplay),
+			bestLapReplay: new Types.ObjectId(track.bestLapReplay),
 		} as ITrack;
 		track.author = authorName;
 		return this.trackRepository.save(newTrack)

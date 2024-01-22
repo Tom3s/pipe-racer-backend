@@ -1,5 +1,6 @@
 import mongoose, { Document, Types } from "mongoose";
 import { IUser, User } from "./User";
+import { IReplay, Replay } from "./Replay";
 
 const { Schema } = mongoose;
 
@@ -12,6 +13,11 @@ export interface ITrack extends Document {
 	downloads?: number;
 	uploadDate?: Date;
 	unlisted?: boolean;
+	bestTotalTime: number;
+	bestLapTime: number;
+	bestTotalReplay: Types.ObjectId | IReplay;
+	bestLapReplay: Types.ObjectId | IReplay;
+
 }
 
 export const TrackSchema = new Schema({
@@ -32,6 +38,30 @@ export const TrackSchema = new Schema({
 	rating: { type: Number, /*required: true,*/ default: 0 },
 	downloads: { type: Number, /*required: true,*/ default: 0 },
 	unlisted: { type: Boolean, default: false },
+	bestTotalTime: { type: Number, required: true },
+	bestLapTime: { type: Number, required: true },
+	bestTotalReplay: { 
+		type: Schema.Types.ObjectId, 
+		ref: "Replay", 
+		required: true,
+		validate: {
+			validator: (replayId: Types.ObjectId) => {
+				return Replay.exists({ _id: replayId });
+			},
+			message: "Best total replay must be empty"
+		}
+	},
+	bestLapReplay: { 
+		type: Schema.Types.ObjectId, 
+		ref: "Replay", 
+		required: true,
+		validate: {
+			validator: (replayId: Types.ObjectId) => {
+				return Replay.exists({ _id: replayId });
+			},
+			message: "Best lap replay must be empty"
+		}
+	},
 });
 
 export const Track = mongoose.model<ITrack>("Track", TrackSchema);

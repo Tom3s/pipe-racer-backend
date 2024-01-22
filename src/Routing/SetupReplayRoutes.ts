@@ -30,6 +30,22 @@ export const setupReplayRoutes = (app: Express, replayService: ReplayService) =>
 			sendErrorResponse(response, error);
 		}
 	});
+	
+	app.post(`${basePath}/validation`, bodyParser.raw({
+		// binary file
+		type: 'application/octet-stream',
+		limit: '10mb'
+	}), async (request: Request, response: Response) => {
+		const sessionToken = request.header('Session-Token') as string;
+		try {
+			const sessionData: SessionData = AuthenticationService.verifySessionToken(sessionToken);
+
+			const replay = await replayService.uploadValidationReplay(request.body, sessionData.userId);
+			sendOKResponse(response, replay);
+		} catch (error: any) {
+			sendErrorResponse(response, error);
+		}
+	});
 
 	// READ
 	app.get(`${basePath}/:id`, async (request: Request, response: Response) => {
