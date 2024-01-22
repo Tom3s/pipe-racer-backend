@@ -68,7 +68,21 @@ export const setupTrackRoutes = (app: Express, trackService: TrackService, track
 		}
 	});
 
-	// UPDATE - not available for tracks
+	// UPDATE 
+
+	app.put(`${basePath}/:id`, async (request: Request, response: Response) => {
+		const sessionToken = request.header('Session-Token') as string;
+		try {
+			const sessionData: SessionData = AuthenticationService.verifySessionToken(sessionToken);
+			const trackId = request.params.id as string;
+			const unlisted = request.body.unlisted as boolean;
+			const track = await trackService.setUnlisted(createObjectId(trackId), sessionData.userId, unlisted);
+			sendOKResponse(response, track);
+		} catch (error: any) {
+			sendErrorResponse(response, error);
+		}
+	});
+
 
 	// DELETE
 

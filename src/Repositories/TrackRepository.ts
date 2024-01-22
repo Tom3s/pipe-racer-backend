@@ -17,7 +17,9 @@ export class TrackRepository extends Repository<ITrack> {
 	getPage(pageSize: number = 0, pageNumber: number = 0, sortByField: string = "_id", sortDirection: number = 1): Promise<ITrack[]> {
 		const sortObject: any = {};
 		sortObject[sortByField] = sortDirection;
-		return this.model.find({})
+		return this.model.find({
+				unlisted: false
+		})
 			.sort(sortObject)
 			.skip(pageSize * pageNumber)
 			.limit(pageSize)
