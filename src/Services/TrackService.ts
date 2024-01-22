@@ -94,7 +94,17 @@ export class TrackService {
 		});
 	}
 
-	// UPDATE - tracks are not editable. this is to keep leaderboard integrity
+	// UPDATE 
+
+	async setUnlisted(trackId: Types.ObjectId, userId: Types.ObjectId, unlisted: boolean): Promise<ITrack> {
+		// return this.trackRepository.update(trackId, { unlisted: unlisted, author: userId }).then((track) => {
+		return this.trackRepository.updateWithFindQuery({_id: trackId, author: userId}, { unlisted: unlisted }).then((track) => {
+			if (track === null) {
+				throw new TrackNotFoundError();
+			}
+			return track;
+		});
+	}
 
 	// DELETE
 

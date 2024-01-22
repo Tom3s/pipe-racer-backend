@@ -11,6 +11,7 @@ export interface ITrack extends Document {
 	rating?: number;
 	downloads?: number;
 	uploadDate?: Date;
+	unlisted?: boolean;
 }
 
 export const TrackSchema = new Schema({
@@ -29,7 +30,8 @@ export const TrackSchema = new Schema({
 		}
 	},
 	rating: { type: Number, /*required: true,*/ default: 0 },
-	downloads: { type: Number, /*required: true,*/ default: 0 }
+	downloads: { type: Number, /*required: true,*/ default: 0 },
+	unlisted: { type: Boolean, default: false },
 });
 
 export const Track = mongoose.model<ITrack>("Track", TrackSchema);
