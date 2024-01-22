@@ -33,7 +33,7 @@ export const ReplaySchema = new Schema({
 					return false;
 				}
 				// check if exists, and if track exists OR is validation run
-				console.log("Track ID: ", trackId, " - Validation: ", this.validation); 
+				// console.log("Track ID: ", trackId, " - Validation: ", this.validation); 
 				if (this.validation) {
 					return true;
 				}
