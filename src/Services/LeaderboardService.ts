@@ -1,9 +1,13 @@
 import { Types } from "mongoose";
 import { ICompletedRun } from "../Models/CompletedRun";
 import { CompletedRunRepository } from "../Repositories/CompletedRunRepository";
+import { CollectedMedalService } from "./CollectedMedalService";
 
 export class LeaderboardService {
-	constructor(private completedRunRepository: CompletedRunRepository) { }
+	constructor(
+		private completedRunRepository: CompletedRunRepository,
+		private collectedMedalService: CollectedMedalService,	
+	) { }
 
 	saveRun(run: ICompletedRun): Promise<ICompletedRun> {
 		// const laptimes = run.splits.map(lap => lap[lap.length - 1]);
@@ -13,6 +17,13 @@ export class LeaderboardService {
 		// // Create a new object with the updated properties without modifying the original run
 		// run.time = totalTime;
 		// run.bestLap = bestLap;
+
+		this.collectedMedalService.collectMedals(
+			run.user,
+			run.track,
+			run.time,
+			run.bestLap,
+		)
 
 		return this.completedRunRepository.save(run);
 	}
@@ -103,7 +114,7 @@ export class LeaderboardService {
 			{ $match: { 
 				track: trackId, 
 				user: userId,
-				_id: { $gt: new Types.ObjectId("658ddb9b786b74072221b620")}
+				_id: { $gt: new Types.ObjectId("65abd27607d72a7278d5fb5b")}
 			} },
 			{ $sort: { time: 1 } },
 			{ $limit: 1 },
@@ -122,7 +133,7 @@ export class LeaderboardService {
 			{ $match: { 
 				track: trackId, 
 				user: userId,
-				_id: { $gt: new Types.ObjectId("658ddb9b786b74072221b620")}
+				_id: { $gt: new Types.ObjectId("65abd27607d72a7278d5fb5b")}
 			} },
 			{ $sort: { bestLap: 1 } },
 			{ $limit: 1 },

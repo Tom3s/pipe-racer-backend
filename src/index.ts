@@ -40,6 +40,9 @@ import { ReplayRepository } from './Repositories/ReplayRepository';
 import { ReplayFileService } from './Services/ReplayFileService';
 import { ReplayService } from './Services/ReplayService';
 import { setupReplayRoutes } from './Routing/SetupReplayRoutes';
+import { CollectedMedalRepository } from './Repositories/CollectedMedalRepository';
+import { CollectedMedalService } from './Services/CollectedMedalService';
+import { setupMedalRoutes } from './Routing/SetupMedalRoutes';
 
 dotenv.config();
 
@@ -71,6 +74,7 @@ const globalScoreRepository = new GlobalScoreRepository();
 const commentRepository = new CommentRepository();
 const commentRatingRepository = new CommentRatingRepository();
 const replayRepository = new ReplayRepository();
+const collectedMedalRepository = new CollectedMedalRepository();
 
 const imageFileService = new ImageFileService();
 const trackFileService = new TrackFileService();
@@ -78,7 +82,8 @@ const trackService = new TrackService(trackRepository, ratingRepository, trackFi
 const authService = new AuthenticationService(userRepository);
 const userService = new UserService(userRepository);
 const ratingService = new RatingService(ratingRepository, trackService);
-const leaderboardService = new LeaderboardService(completedRunRepository);
+const collectedMedalService = new CollectedMedalService(collectedMedalRepository, trackRepository);
+const leaderboardService = new LeaderboardService(completedRunRepository, collectedMedalService);
 const trackStatService = new TrackStatService(trackStatRepository);
 const editorStatService = new EditorStatService(editorStatRepository);
 const globalScoreService = new GlobalScoreService(globalScoreRepository, userService, trackService, leaderboardService);
@@ -97,6 +102,7 @@ setupStatRoutes(app, trackStatService, editorStatService, userStatService);
 setupGlobalRankRoutes(app, globalScoreService);
 setupCommentRoutes(app, commentService, commentRatingService);
 setupReplayRoutes(app, replayService);
+setupMedalRoutes(app, collectedMedalService);
 
 const privateKeyPath = path.join(__dirname, '../key.pem');
 const certificatePath = path.join(__dirname, '../cert.pem');
