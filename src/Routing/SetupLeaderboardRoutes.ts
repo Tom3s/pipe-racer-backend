@@ -25,6 +25,31 @@ export const setupLeaderboardRoutes = (app: Express, leaderboardService: Leaderb
 		}
 	});
 
+	app.get(`${basePath}/pb/:trackId`, (request: Request, response: Response) => {
+		const trackId = createObjectId(request.params.trackId as string);
+		const sessionToken = request.header('Session-Token') as string;
+
+		try {
+			const sessionData: SessionData = AuthenticationService.verifySessionToken(sessionToken);
+
+			const bestLap = request.query.bestLap === 'true';
+			if (bestLap) {
+				leaderboardService.getPersonalBestLapTime(trackId, sessionData.userId)
+					.then((time) => {
+						sendOKResponse(response, time);
+					})
+			} else {
+				leaderboardService.getPersonalBestTotalTime(trackId, sessionData.userId)
+					.then((time) => {
+						sendOKResponse(response, time);
+					})
+			}
+		} catch (error: any) {
+			sendErrorResponse(response, error);
+		}
+	});
+
+
 	app.post(basePath, async (request: Request, response: Response) => {
 		const sessionToken = request.header('Session-Token') as string;
 		try {

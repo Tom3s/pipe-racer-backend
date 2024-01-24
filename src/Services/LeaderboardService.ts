@@ -97,4 +97,42 @@ export class LeaderboardService {
 				}) as ICompletedRun[];
 			});
 	}
+
+	getPersonalBestTotalTime(trackId: Types.ObjectId, userId: Types.ObjectId): Promise<ICompletedRun> {
+		const pipeline = [
+			{ $match: { 
+				track: trackId, 
+				user: userId,
+				_id: { $gt: new Types.ObjectId("658ddb9b786b74072221b620")}
+			} },
+			{ $sort: { time: 1 } },
+			{ $limit: 1 },
+		];
+		return this.completedRunRepository.aggregate(pipeline)
+			.then((runs) => {
+				if (runs.length === 0) {
+					return {} as ICompletedRun;
+				}
+				return runs[0];
+			});
+	}
+
+	getPersonalBestLapTime(trackId: Types.ObjectId, userId: Types.ObjectId): Promise<ICompletedRun> {
+		const pipeline = [
+			{ $match: { 
+				track: trackId, 
+				user: userId,
+				_id: { $gt: new Types.ObjectId("658ddb9b786b74072221b620")}
+			} },
+			{ $sort: { bestLap: 1 } },
+			{ $limit: 1 },
+		];
+		return this.completedRunRepository.aggregate(pipeline)
+			.then((runs) => {
+				if (runs.length === 0) {
+					return {} as ICompletedRun;
+				}
+				return runs[0];
+			});
+	}
 }
