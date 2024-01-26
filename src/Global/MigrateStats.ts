@@ -38,12 +38,12 @@ export const updateMapsFrom2To3 = () => {
 
 	Track.find({}).then((tracks) => {
 		tracks.forEach((track) => {
-			const filePath = path.join(__dirname, '../../public/tracks', track._id, '.json');
+			const filePath = path.join(__dirname, '../../public/tracks', track._id.toString(), '.json');
 
 			let jsonData = JSON.parse(fs.readFileSync(filePath, 'utf8'));
 			if (jsonData.format !== 2) return;
 			
-			let currentMapping = mappings.find((mapping: any) => mapping.mapId === track._id);
+			let currentMapping = mappings.find((mapping: any) => mapping.mapId === track._id.toString());
 
 			jsonData.format = 3;
 			jsonData.bestTotalTime = currentMapping.bestTotalTime;
@@ -59,6 +59,9 @@ export const updateMapsFrom2To3 = () => {
 			track.bestLapReplay = currentMapping.bestLapReplay;
 
 			track.save();
+
+			console.log(`Updated track ${track._id.toString()}`);
 		});
 	});
+	console.log('Done updating maps');
 }
