@@ -114,7 +114,7 @@ export class LeaderboardService {
 			{ $match: { 
 				track: trackId, 
 				user: userId,
-				_id: { $gt: new Types.ObjectId("65abd27607d72a7278d5fb5b")}
+				_id: { $gt: new Types.ObjectId("65b377c93e895d1419ede2db")}
 			} },
 			{ $sort: { time: 1 } },
 			{ $limit: 1 },
@@ -133,7 +133,7 @@ export class LeaderboardService {
 			{ $match: { 
 				track: trackId, 
 				user: userId,
-				_id: { $gt: new Types.ObjectId("65abd27607d72a7278d5fb5b")}
+				_id: { $gt: new Types.ObjectId("65b377c93e895d1419ede2db")}
 			} },
 			{ $sort: { bestLap: 1 } },
 			{ $limit: 1 },
