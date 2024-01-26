@@ -24,7 +24,6 @@ import { setupStatRoutes } from './Routing/SetupStatRoutes';
 import { TrackStatService } from './Services/TrackStatService';
 import { TrackStatRepository } from './Repositories/TrackStatRepository';
 import { UserStatService } from './Services/UserStatService';
-import { migrateCompletedRunsToStats } from './Global/MigrateStats';
 import { EditorStatRepository } from './Repositories/EditorStatRepository';
 import { EditorStatService } from './Services/EditorStatService';
 import { setupGlobalRankRoutes } from './Routing/SetupGlobalRankRoutes';
@@ -35,7 +34,6 @@ import { CommentService } from './Services/CommentService';
 import { CommentRepository } from './Repositories/CommentRepository';
 import { CommentRatingRepository } from './Repositories/CommentRatingRepository';
 import { CommentRatingService } from './Services/CommentRatingService';
-import { Replay } from './Models/Replay';
 import { ReplayRepository } from './Repositories/ReplayRepository';
 import { ReplayFileService } from './Services/ReplayFileService';
 import { ReplayService } from './Services/ReplayService';
@@ -43,6 +41,7 @@ import { setupReplayRoutes } from './Routing/SetupReplayRoutes';
 import { CollectedMedalRepository } from './Repositories/CollectedMedalRepository';
 import { CollectedMedalService } from './Services/CollectedMedalService';
 import { setupMedalRoutes } from './Routing/SetupMedalRoutes';
+import { updateMapsFrom2To3 } from './Global/MigrateStats';
 
 dotenv.config();
 
@@ -87,7 +86,7 @@ const leaderboardService = new LeaderboardService(completedRunRepository, collec
 const trackStatService = new TrackStatService(trackStatRepository);
 const editorStatService = new EditorStatService(editorStatRepository);
 const globalScoreService = new GlobalScoreService(globalScoreRepository, userService, trackService, leaderboardService);
-const userStatService = new UserStatService(trackStatService, editorStatService, trackService, ratingService, globalScoreService);
+const userStatService = new UserStatService(trackStatService, editorStatService, trackService, ratingService, globalScoreService, collectedMedalService);
 const commentService = new CommentService(commentRepository, commentRatingRepository)
 const commentRatingService = new CommentRatingService(commentRatingRepository, commentService);
 const replayFileService = new ReplayFileService();
@@ -115,6 +114,7 @@ const credentials = {
 };
 
 // migrateCompletedRunsToStats();
+updateMapsFrom2To3();
 
 const httpsServer = https.createServer(credentials, app);
 
