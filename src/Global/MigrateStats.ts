@@ -33,7 +33,7 @@ export const updateMapsFrom2To3 = () => {
 	const fs = require('fs');
 	const path = require('path');
 
-	const mappingFilePath = path.join(__dirname, './mappings.json');
+	const mappingFilePath = path.join(__dirname, '../../src/Global/mappings.json');
 	let mappings = JSON.parse(fs.readFileSync(mappingFilePath, 'utf8'));
 
 	Track.find({}).then((tracks) => {
