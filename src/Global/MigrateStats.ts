@@ -45,6 +45,11 @@ export const updateMapsFrom2To3 = () => {
 			
 			let currentMapping = mappings.find((mapping: any) => mapping.mapId === track._id.toString());
 
+			if (currentMapping === undefined) {
+				console.log(`No mapping found for track ${track._id.toString()}`);
+				return;
+			}
+
 			jsonData.format = 3;
 			jsonData.bestTotalTime = currentMapping.bestTotalTime;
 			jsonData.bestLapTime = currentMapping.bestLapTime;
