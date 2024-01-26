@@ -114,7 +114,7 @@ const credentials = {
 };
 
 // migrateCompletedRunsToStats();
-updateMapsFrom2To3();
+// updateMapsFrom2To3();
 
 const httpsServer = https.createServer(credentials, app);
 
