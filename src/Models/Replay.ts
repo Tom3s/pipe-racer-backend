@@ -7,6 +7,7 @@ const { Schema } = mongoose;
 export interface IReplay extends Document {
 	user: Types.ObjectId;
 	track: Types.ObjectId;
+	validation: boolean;
 	time?: number;
 	date?: Date;
 };
@@ -27,11 +28,25 @@ export const ReplaySchema = new Schema({
 		ref: "Track",
 		required: true,
 		validate: {
-			validator: (trackId: Types.ObjectId) => {
+			validator: function(this: IReplay, trackId: Types.ObjectId): any {
+				if (this === undefined) {
+					return false;
+				}
+				// check if exists, and if track exists OR is validation run
+				// console.log("Track ID: ", trackId, " - Validation: ", this.validation); 
+				if (this.validation) {
+					return true;
+				}
 				return Track.exists({ _id: trackId });
 			}
-		}
+		},
+		message: "Track does not exist or is not a validation run"
 	},
+	validation: {
+		type: Boolean,
+		required: true,
+		default: false,
+	}
 });
 
 export const Replay = mongoose.model<IReplay>("Replay", ReplaySchema);

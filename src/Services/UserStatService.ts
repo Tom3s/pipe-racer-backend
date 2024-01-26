@@ -10,6 +10,7 @@ import { GlobalScoreService } from "./GlobalScoreService";
 import { IGlobalScore } from "../Models/GlobalScore";
 import { ITrack } from "../Models/Track";
 import { IUser } from "../Models/User";
+import { CollectedMedalService } from "./CollectedMedalService";
 
 export class UserStatService {
 	constructor(
@@ -18,6 +19,7 @@ export class UserStatService {
 		private trackService: TrackService,
 		private ratingService: RatingService,
 		private globalScoreService: GlobalScoreService,
+		private collectedMedalService: CollectedMedalService,
 	) { }
 
 	// CREATE - none
@@ -32,6 +34,7 @@ export class UserStatService {
 		const editorStats = await this.editorStatService.getStatsForUser(userId);
 		const tracks = await this.trackService.getTracksByUser(userId);
 		const ratings = await this.ratingService.getRatingsByUser(userId);
+		const medals = await this.collectedMedalService.getMedalsForUser(userId);
 
 		// sum(stat.playtime)
 		const ingamePlaytime = trackStats.reduce((sum, stat) => {
@@ -134,6 +137,15 @@ export class UserStatService {
 			placedAll: placedAll,
 			nrTests: nrTests,
 			globalScore: globalScore,
+
+			chronoMedals: medals.chronoMedals,
+			totalGoldMedals: medals.totalGoldMedals,
+			totalSilverMedals: medals.totalSilverMedals,
+			totalBronzeMedals: medals.totalBronzeMedals,
+			blitzMedals: medals.blitzMedals,
+			lapGoldMedals: medals.lapGoldMedals,
+			lapSilverMedals: medals.lapSilverMedals,
+			lapBronzeMedals: medals.lapBronzeMedals,
 		} as IUserStats;
 
 	}

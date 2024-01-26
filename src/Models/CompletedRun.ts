@@ -10,8 +10,8 @@ export interface ICompletedRun extends Document {
 	track: Types.ObjectId;
 	replay: Types.ObjectId;
 	splits: number[][]; // [lapIndex][preLapSplitIndex]
-	time?: number;
-	bestLap?: number;
+	time: number;
+	bestLap: number;
 	date?: Date;
 };
 
@@ -56,8 +56,14 @@ export const CompletedRunSchema = new Schema({
 		type: [[Number]],
 		required: true,
 	},
-	time: Number,
-	bestLap: Number,
+	time: {
+		type: Number,
+		required: true,
+	},
+	bestLap: {
+		type: Number,
+		required: true,
+	},
 });
 
 export const CompletedRun = mongoose.model<ICompletedRun>("CompletedRun", CompletedRunSchema);

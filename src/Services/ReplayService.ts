@@ -52,6 +52,38 @@ export class ReplayService {
 			})
 	}
 
+	async uploadValidationReplay(replay: Buffer, user: Types.ObjectId): Promise<IReplay> {
+		const formatVersion = replay.readInt8(0);
+		if (formatVersion !== CURRENT_FORMAT_VERSION) {
+			throw new Error(`Invalid replay format version: ${formatVersion} (newest: ${CURRENT_FORMAT_VERSION})`);
+		}
+		const trackMetadata = replay.toString("utf-8", 1, replay.indexOf("\n"));
+		// const trackId = trackMetadata.split(",")[0];
+		const time = replay.readUInt32LE(replay.indexOf("\n") + 3);
+
+		console.log("Time: ", time);
+
+		const newReplay = {
+			user: user,
+			track: new Types.ObjectId("5f9f9b9b9b9b9b9b9b9b9b9b"),
+			time: time,
+			validation: true,
+		} as IReplay;
+
+		return this.replayRepository.save(newReplay)
+			.then((addedReplay) => {
+				return this.replayFileService.saveReplayFile(replay, addedReplay._id.toHexString())
+					.then(() => {
+						return addedReplay;
+					})
+					.catch((error) => {
+						console.log("deleting replay entry from database", addedReplay._id);
+						this.replayRepository.remove(addedReplay._id);
+						throw error;
+					})
+			})
+	}
+
 	// READ
 
 	async getReplaysByTrackId(trackId: Types.ObjectId): Promise<IReplay[]> {
