@@ -38,7 +38,7 @@ export const updateMapsFrom2To3 = () => {
 
 	Track.find({}).then((tracks) => {
 		tracks.forEach((track) => {
-			const filePath = path.join(__dirname, '../../public/tracks', track._id.toString(), '.json');
+			const filePath = path.join(__dirname, '../../public/tracks', track._id.toString() + '.json');
 
 			let jsonData = JSON.parse(fs.readFileSync(filePath, 'utf8'));
 			if (jsonData.format !== 2) return;
