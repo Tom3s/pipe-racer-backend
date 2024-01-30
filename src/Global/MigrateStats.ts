@@ -53,7 +53,7 @@ export const updateMapsFrom2To3 = () => {
 			jsonData.format = 3;
 			jsonData.bestTotalTime = currentMapping.bestTotalTime;
 			jsonData.bestLapTime = currentMapping.bestLapTime;
-			jsonData.betTotalReplay = currentMapping.bestTotalReplay;
+			jsonData.bestTotalReplay = currentMapping.bestTotalReplay;
 			jsonData.bestLapReplay = currentMapping.bestLapReplay;
 
 			fs.writeFileSync(filePath, JSON.stringify(jsonData));

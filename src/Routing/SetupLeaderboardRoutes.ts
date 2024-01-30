@@ -32,7 +32,7 @@ export const setupLeaderboardRoutes = (app: Express, leaderboardService: Leaderb
 		try {
 			const sessionData: SessionData = AuthenticationService.verifySessionToken(sessionToken);
 
-			const bestLap = request.query.bestLap === 'true';
+			const bestLap = request.query.sortByLap === 'true';
 			if (bestLap) {
 				leaderboardService.getPersonalBestLapTime(trackId, sessionData.userId)
 					.then((time) => {
@@ -42,6 +42,30 @@ export const setupLeaderboardRoutes = (app: Express, leaderboardService: Leaderb
 				leaderboardService.getPersonalBestTotalTime(trackId, sessionData.userId)
 					.then((time) => {
 						sendOKResponse(response, time);
+					})
+			}
+		} catch (error: any) {
+			sendErrorResponse(response, error);
+		}
+	});
+	
+	app.get(`${basePath}/placement/:trackId`, (request: Request, response: Response) => {
+		const trackId = createObjectId(request.params.trackId as string);
+		const sessionToken = request.header('Session-Token') as string;
+
+		try {
+			const sessionData: SessionData = AuthenticationService.verifySessionToken(sessionToken);
+
+			const bestLap = request.query.sortByLap === 'true';
+			if (bestLap) {
+				leaderboardService.getPlacementLapTime(trackId, sessionData.userId)
+					.then((placement) => {
+						sendOKResponse(response, placement);
+					})
+			} else {
+				leaderboardService.getPlacementTotalTime(trackId, sessionData.userId)
+					.then((placement) => {
+						sendOKResponse(response, placement);
 					})
 			}
 		} catch (error: any) {

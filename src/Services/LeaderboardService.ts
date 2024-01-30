@@ -6,7 +6,7 @@ import { CollectedMedalService } from "./CollectedMedalService";
 export class LeaderboardService {
 	constructor(
 		private completedRunRepository: CompletedRunRepository,
-		private collectedMedalService: CollectedMedalService,	
+		private collectedMedalService: CollectedMedalService,
 	) { }
 
 	saveRun(run: ICompletedRun): Promise<ICompletedRun> {
@@ -111,11 +111,13 @@ export class LeaderboardService {
 
 	getPersonalBestTotalTime(trackId: Types.ObjectId, userId: Types.ObjectId): Promise<ICompletedRun> {
 		const pipeline = [
-			{ $match: { 
-				track: trackId, 
-				user: userId,
-				_id: { $gt: new Types.ObjectId("65b377c93e895d1419ede2db")}
-			} },
+			{
+				$match: {
+					track: trackId,
+					user: userId,
+					_id: { $gt: new Types.ObjectId("65b377c93e895d1419ede2db") }
+				}
+			},
 			{ $sort: { time: 1 } },
 			{ $limit: 1 },
 		];
@@ -130,11 +132,13 @@ export class LeaderboardService {
 
 	getPersonalBestLapTime(trackId: Types.ObjectId, userId: Types.ObjectId): Promise<ICompletedRun> {
 		const pipeline = [
-			{ $match: { 
-				track: trackId, 
-				user: userId,
-				_id: { $gt: new Types.ObjectId("65b377c93e895d1419ede2db")}
-			} },
+			{
+				$match: {
+					track: trackId,
+					user: userId,
+					_id: { $gt: new Types.ObjectId("65b377c93e895d1419ede2db") }
+				}
+			},
 			{ $sort: { bestLap: 1 } },
 			{ $limit: 1 },
 		];
@@ -144,6 +148,56 @@ export class LeaderboardService {
 					return {} as ICompletedRun;
 				}
 				return runs[0];
+			});
+	}
+
+	getPlacementTotalTime(trackId: Types.ObjectId, userId: Types.ObjectId): Promise<string> {
+		const pipeline = [
+			{ $match: { track: trackId } },
+			{ $sort: { time: 1 } },
+			{
+				$group: {
+					_id: "$user",
+					fastestRun: { $first: "$$ROOT" }, // Keep the entire document of the fastest run
+				},
+			},
+			{
+				$sort: { "fastestRun.time": 1 }
+			},
+			{
+				$replaceRoot: { newRoot: "$fastestRun" }, // Replace the root document with the fastest run
+			}
+		];
+
+		return this.completedRunRepository.aggregate(pipeline)
+			.then((runs) => {
+				const placement = runs.findIndex((run) => run.user.toString() === userId.toString());
+				return `${placement + 1}/${runs.length}`;
+			});
+	}
+
+	getPlacementLapTime(trackId: Types.ObjectId, userId: Types.ObjectId): Promise<string> {
+		const pipeline = [
+			{ $match: { track: trackId } },
+			{ $sort: { bestLap: 1 } },
+			{
+				$group: {
+					_id: "$user",
+					fastestRun: { $first: "$$ROOT" }, // Keep the entire document of the fastest run
+				},
+			},
+			{
+				$sort: { "fastestRun.bestLap": 1 }
+			},
+			{
+				$replaceRoot: { newRoot: "$fastestRun" }, // Replace the root document with the fastest run
+			}
+		];
+
+		return this.completedRunRepository.aggregate(pipeline)
+			.then((runs) => {
+				const placement = runs.findIndex((run) => run.user.toString() === userId.toString());
+				return `${placement + 1}/${runs.length}`;
 			});
 	}
 }
