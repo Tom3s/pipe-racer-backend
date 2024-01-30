@@ -172,6 +172,9 @@ export class LeaderboardService {
 		return this.completedRunRepository.aggregate(pipeline)
 			.then((runs) => {
 				const placement = runs.findIndex((run) => run.user.toString() === userId.toString());
+				if (placement === -1) {
+					return "N/A";
+				}
 				return `${placement + 1}/${runs.length}`;
 			});
 	}
@@ -197,6 +200,9 @@ export class LeaderboardService {
 		return this.completedRunRepository.aggregate(pipeline)
 			.then((runs) => {
 				const placement = runs.findIndex((run) => run.user.toString() === userId.toString());
+				if (placement === -1) {
+					return "N/A";
+				}
 				return `${placement + 1}/${runs.length}`;
 			});
 	}
