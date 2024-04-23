@@ -44,7 +44,7 @@ export class CollectedMedalService {
 				} else {
 					return this.collectedMedalRepository.update(
 						foundMedal._id,
-						this.getNewMedal(userId, track, totalTime, bestLapTime)
+						this.getNewMedal(userId, track, totalTime, bestLapTime, foundMedal)
 					)
 				}
 			})
@@ -79,20 +79,21 @@ export class CollectedMedalService {
 		track: ITrack,
 		totalTime: number,
 		bestLapTime: number,
+		oldMedal: ICollectedMedal | null = null
 	): ICollectedMedal {
 		const medals = {
 			userId: userId,
 			trackId: track._id,
 			
-			chronoMedal: totalTime <= track.bestTotalTime,
-			totalGoldMedal: totalTime <= track.bestTotalTime * this.GOLD_MULTIPLIER,
-			totalSilverMedal: totalTime <= track.bestTotalTime * this.SILVER_MULTIPLIER,
-			totalBronzeMedal: totalTime <= track.bestTotalTime * this.BRONZE_MULTIPLIER,
+			chronoMedal: totalTime <= track.bestTotalTime || (oldMedal && oldMedal.chronoMedal),
+			totalGoldMedal: totalTime <= track.bestTotalTime * this.GOLD_MULTIPLIER || (oldMedal && oldMedal.totalGoldMedal),
+			totalSilverMedal: totalTime <= track.bestTotalTime * this.SILVER_MULTIPLIER || (oldMedal && oldMedal.totalSilverMedal),
+			totalBronzeMedal: totalTime <= track.bestTotalTime * this.BRONZE_MULTIPLIER || (oldMedal && oldMedal.totalBronzeMedal),
 
-			blitzMedal: bestLapTime <= track.bestLapTime,
-			lapGoldMedal: bestLapTime <= track.bestLapTime * this.GOLD_MULTIPLIER,
-			lapSilverMedal: bestLapTime <= track.bestLapTime * this.SILVER_MULTIPLIER,
-			lapBronzeMedal: bestLapTime <= track.bestLapTime * this.BRONZE_MULTIPLIER,
+			blitzMedal: bestLapTime <= track.bestLapTime || (oldMedal && oldMedal.blitzMedal),
+			lapGoldMedal: bestLapTime <= track.bestLapTime * this.GOLD_MULTIPLIER || (oldMedal && oldMedal.lapGoldMedal),
+			lapSilverMedal: bestLapTime <= track.bestLapTime * this.SILVER_MULTIPLIER || (oldMedal && oldMedal.lapSilverMedal),
+			lapBronzeMedal: bestLapTime <= track.bestLapTime * this.BRONZE_MULTIPLIER || (oldMedal && oldMedal.lapBronzeMedal),
 		} as ICollectedMedal;
 		return medals;
 	}
