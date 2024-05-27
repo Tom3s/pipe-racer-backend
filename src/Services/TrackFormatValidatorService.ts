@@ -14,6 +14,9 @@ export const validateTrackFormat = (track: any) => {
 		case 3:
 			validateTrackFormat3(track);
 			break;
+		case 4:
+			validateTrackFormat4(track);
+			break;
 
 		default:
 			throw new InvalidTrackFormatError("Invalid track format id");
@@ -205,5 +208,51 @@ const verifyProp2 = (prop: any) => {
 			throw new InvalidTrackFormatError("Invalid prop format");
 		}
 	}
+}
+
+export const validateTrackFormat4 = (track: any) => {
+	const requiredMetadataFields = [
+		"trackName",
+		"lapCount",
+
+		"validated",
+		"bestTotalTime",
+		"bestTotalReplay",
+		"bestLapTime",
+		"bestLapReplay",
+	]
+
+	if (track["metadata"] === undefined) {
+		throw new InvalidTrackFormatError("No metadata");
+	} else {
+		for (const field of requiredMetadataFields) {
+			if (!track.metadata.hasOwnProperty(field)) {
+				throw new InvalidTrackFormatError(`Missing metadata field: ${field}`);
+			}
+		}
+	}
+
+	if (track["validated"] === undefined) {
+		throw new InvalidTrackFormatError("Unvalidated track");
+	} else {
+		if (!track["validated"]) {
+			throw new InvalidTrackFormatError("Unvalidated track");
+		}
+	
+	}
+
+
+	const requiredFields = [
+		"start",
+		"checkpoints"
+	]
+
+	for (const field of requiredFields) {
+		if (!track.hasOwnProperty(field)) {
+			throw new InvalidTrackFormatError(`Missing field: ${field}`);
+		}
+	}
+
+	// the rest is optional
 }
 
