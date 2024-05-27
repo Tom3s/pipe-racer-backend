@@ -24,15 +24,16 @@ export class TrackService {
 	// CREATE
 
 	async uploadTrack(track: any, author: Types.ObjectId, authorName: string): Promise<ITrack> {
+		console.log("Metadata: ", track.metadata);
 		const newTrack = {
-			name: track.trackName as string,
+			name: track.metadata.trackName as string,
 			author: author,
-			bestLapTime: track.bestLapTime as number,
-			bestTotalTime: track.bestTotalTime as number,
-			bestTotalReplay: new Types.ObjectId(track.bestTotalReplay),
-			bestLapReplay: new Types.ObjectId(track.bestLapReplay),
+			bestLapTime: track.metadata.bestLapTime as number,
+			bestTotalTime: track.metadata.bestTotalTime as number,
+			bestTotalReplay: new Types.ObjectId(track.metadata.bestTotalReplay),
+			bestLapReplay: new Types.ObjectId(track.metadata.bestLapReplay),
 		} as ITrack;
-		track.author = authorName;
+		track.metadata.author = authorName;
 		return this.trackRepository.save(newTrack)
 			.then((addedTrack) => {
 				return this.trackFileService.saveTrackFile(track, addedTrack._id.toHexString())
