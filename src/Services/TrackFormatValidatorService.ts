@@ -12,7 +12,8 @@ export const validateTrackFormat = (track: any) => {
 			throw new InvalidTrackFormatError("Track format 2 is not supported");
 			break;
 		case 3:
-			validateTrackFormat3(track);
+			// validateTrackFormat3(track);
+			throw new InvalidTrackFormatError("Legacy format tracks can no longer be uploaded");
 			break;
 		case 4:
 			validateTrackFormat4(track);
