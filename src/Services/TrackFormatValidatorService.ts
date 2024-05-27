@@ -233,10 +233,10 @@ export const validateTrackFormat4 = (track: any) => {
 		}
 	}
 
-	if (track["validated"] === undefined) {
+	if (track["metadata"]["validated"] === undefined) {
 		throw new InvalidTrackFormatError("Unvalidated track");
 	} else {
-		if (!track["validated"]) {
+		if (!track["metadata"]["validated"]) {
 			throw new InvalidTrackFormatError("Unvalidated track");
 		}
 	
