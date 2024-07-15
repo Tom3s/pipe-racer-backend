@@ -1,13 +1,42 @@
 import { ExpiredRegistrationTokenError } from "../Errors/ExpiredRegistrationTokenError";
 import { ExpiredTokenError } from "../Errors/ExpiredTokenError";
+import { InvalidCharacterError } from "../Errors/InvalidCharacterError";
 import { InvalidEmailError } from "../Errors/InvalidEmailError";
 import { PassworTooWeakError } from "../Errors/PasswordTooWeakError";
 
 export const verifyPasswordStrength = (password: string) => {
-	const regex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*[\d@$!%*#?&._\-,])[A-Za-z\d@$!%*#?&._\-,]{8,}$/;
-	if (!regex.test(password)) {
+	if (password.length < 8) {
 		throw new PassworTooWeakError();
 	}
+
+	let hasUpperCase = false;
+	let hasLowerCase = false;
+	let hasSpecialChar = false;
+
+	const aLower = 'a'.charCodeAt(0);
+	const zLower = 'z'.charCodeAt(0);
+	const aUpper = 'A'.charCodeAt(0);
+	const zUpper = 'Z'.charCodeAt(0);
+
+	for (let i = 0; i < password.length; i++) {
+		const ascii = password.charCodeAt(i);
+		if (ascii < 32) {
+			throw new InvalidCharacterError();
+		}
+
+		if (ascii >= aLower && ascii <= zLower) {
+			hasLowerCase = true;
+		} else if (ascii >= aUpper && ascii <= zUpper) {
+			hasUpperCase = true;
+		} else {
+			hasSpecialChar = true;
+		}
+	}
+
+	if (!hasUpperCase || !hasLowerCase || !hasSpecialChar) {
+		throw new PassworTooWeakError();
+	}
+
 };
 
 export const verifyEmailValidity = (email: string) => {
