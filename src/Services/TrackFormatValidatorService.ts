@@ -16,6 +16,8 @@ export const validateTrackFormat = (track: any) => {
 			throw new InvalidTrackFormatError("Legacy format tracks can no longer be uploaded");
 			break;
 		case 4:
+		case 5:
+		case 6:
 			validateTrackFormat4(track);
 			break;
 
